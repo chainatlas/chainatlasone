@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>BLOCKTRAIN.com</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- Top bar -->
+      <header class="topbar">
+        <div class="brand">
+          <div class="brandTitle">BLOCKTRAIN<span class="dot">.com</span></div>
+        </div>
+
+        <div class="topActions">
+          <span id="status" class="statusPill">Loading…</span>
+          <button id="pauseBtn" class="btn btnGhost" type="button">Pause</button>
+          <button id="themeBtn" class="btn btnIcon" type="button" title="Toggle theme" aria-label="Toggle theme">
+            <span class="iconMoon" aria-hidden="true">☾</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Controls -->
+      <section class="controls">
+        <label class="learnToggle">
+          <input id="learnMode" type="checkbox" />
+          <span>Learning mode</span>
+        </label>
+
+        <div class="searchbar">
+          <input id="searchInput" type="text" placeholder="Search TXID or address…" autocomplete="off" />
+          <button id="searchBtn" class="btn" type="button">Search</button>
+          <button id="searchClear" class="btn btnGhost" type="button" aria-label="Clear">×</button>
+        </div>
+
+        <!-- Toolbar mined display (JS expects this ID) -->
+        <div id="minedDisplay" class="mined"></div>
+      </section>
+
+      <!-- KPI row -->
+      <section class="kpis">
+        <!-- Supply -->
+        <div class="card kpi" id="kpiSupply">
+          <div class="kpiHead">
+            <div class="kpiTitle">CURRENT SUPPLY</div>
+            <div class="kpiSub">of 21M BTC</div>
+          </div>
+
+          <!-- IMPORTANT: JS in the last patch expects supplyMined/supplyRemaining/halvingDays OR you map them in JS.
+               Your current KPI uses supplyValue/remainingValue/supplyBar/supplyPct.
+               This HTML is fine; make sure your JS writes to THESE IDs. -->
+          <div class="kpiValue" id="supplyValue">—</div>
+
+          <div class="kpiInline">
+            <div class="kpiInlineLabel">Remaining</div>
+            <div class="kpiInlineValue"><span id="remainingValue">—</span> <span class="unit">BTC</span></div>
+          </div>
+<div class="kpiInline">
+  <div class="kpiInlineLabel">Block reward</div>
+  <div class="kpiInlineValue"><span id="subsidyValue">—</span> <span class="unit">BTC</span></div>
+</div>
+
+          <div class="kpiBar" aria-label="Supply progress">
+            <div class="kpiBarFill" id="supplyBar"></div>
+          </div>
+
+          <div class="kpiFoot">
+            <span id="supplyPct">—%</span>
+            <span class="muted">progress</span>
+          </div>
+        </div>
+
+        <!-- BTC Price -->
+        <div class="card kpi" id="kpiPrice">
+          <div class="kpiHead">
+            <div>
+              <div class="kpiTitle">BITCOIN PRICE</div>
+              <div class="kpiSub">USD</div>
+            </div>
+
+            <div class="rangeTabs" role="tablist" aria-label="Price range">
+              <button class="tab active" data-range="1" type="button" aria-selected="true">1D</button>
+              <button class="tab" data-range="7" type="button" aria-selected="false">1W</button>
+              <button class="tab" data-range="365" type="button" aria-selected="false">1Y</button>
+              <button class="tab" data-range="max" type="button" aria-selected="false">MAX</button>
+            </div>
+          </div>
+
+          <div class="kpiValue">
+            <span id="btcPrice">—</span>
+            <span class="unit">USD</span>
+          </div>
+
+          <!-- JS needs this canvas ID to draw -->
+          <canvas id="priceChart" class="miniChart" width="520" height="120"></canvas>
+
+          <div class="kpiFoot">
+            <span class="muted" id="priceUpdated">—</span>
+            <span id="priceChange" class="pill">—</span>
+          </div>
+        </div>
+
+        <!-- Halving -->
+        <div class="card kpi" id="kpiHalving">
+          <div class="kpiHead">
+            <div class="kpiTitle">NEXT HALVING</div>
+            <div class="kpiSub" id="halvingHeight">—</div>
+          </div>
+
+          <div class="gaugeWrap">
+            <!-- JS needs this canvas ID -->
+            <canvas id="halvingGauge" width="220" height="220"></canvas>
+            <div class="gaugeCenter">
+              <div class="gaugeBig" id="halvingDays">—</div>
+              <div class="gaugeSmall">days</div>
+            </div>
+          </div>
+
+          <div class="kpiFoot">
+            <span id="halvingBlocksLeft">— blocks to go</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main visualization -->
+      <section class="viz card">
+        <div class="vizTop">
+          <div class="vizTitle">Block Factory</div>
+          <div class="vizLegend">
+            <span class="legendDot dotLow"></span><span>low fee</span>
+            <span class="legendDot dotMed"></span><span>medium</span>
+            <span class="legendDot dotHigh"></span><span>high</span>
+          </div>
+        </div>
+
+        <canvas id="yard" width="820" height="260"></canvas>
+
+        <div id="learnBox" class="learnBox hidden"></div>
+      </section>
+
+      <!-- Feed -->
+      <section class="feedSection">
+        <div class="feed-header card" id="feedHeader">
+          <div id="Time">Time</div>
+          <div id="From">From</div>
+          <div id="To">To</div>
+          <div id="Fee">Fee</div>
+          <div id="Amount" class="right">Amount</div>
+        </div>
+
+        <div class="feedWrap card">
+          <ul id="feed" class="feed"></ul>
+        </div>
+      </section>
+
+      <!-- Details drawer -->
+      <section id="details" class="details hidden">
+        <div class="detailsHeader">
+          <h2>Details</h2>
+          <button id="closeDetailsBtn" class="btn btnGhost" type="button">Close</button>
+        </div>
+        <div id="detailsContent"></div>
+      </section>
+
+      <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
