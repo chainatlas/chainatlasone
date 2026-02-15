@@ -65,8 +65,20 @@ body{
 .topbar{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  margin-bottom: 14px;
+  justify-content:space-between; /* Logo links, Buttons rechts */
+  gap:16px;
+}
+.topLeft{                       /* linker Spacer */
+  justify-self:start;
+}
+.brand{
+  display:flex;
+  align-items:center;
+}
+.topActions{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 .brandTitle{
   font-weight: 900;
@@ -419,3 +431,32 @@ body{
   .kpis{ grid-template-columns: 1fr; }
   :root{ --feed-cols: 90px 1fr 1fr 90px 160px; }
 }
+.brand{
+  display:flex;
+  align-items:center;
+}
+.brand {
+justify-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Logo Grundgröße */
+.logo {
+  height: 52px;              /* größer: z.B. 72px wenn du willst */
+  width: auto;
+  display: block;
+}
+
+/* Default: dark */
+.logo-dark{ display:block; }
+.logo-light{ display:none; }
+
+/* Explicit theme switching */
+html[data-theme="dark"] .logo-dark{ display:block; }
+html[data-theme="dark"] .logo-light{ display:none; }
+
+html[data-theme="light"] .logo-dark{ display:none; }
+html[data-theme="light"] .logo-light{ display:block; }
+

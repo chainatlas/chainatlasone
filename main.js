@@ -126,6 +126,20 @@ function blockSubsidyBtcAtHeight(height) {
 }
 
 /* ---------------- Theme (default dark) ---------------- */
+function updateLogoForTheme(isDark) {
+  const logo = document.getElementById("brandLogo");
+  if (!logo) return;
+
+  logo.src = isDark
+    ? "/logo-dark.png"
+    : "/logo-light.png";
+}
+updateLogoForTheme(document.body.classList.contains("dark"));
+themeBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  updateLogoForTheme(document.body.classList.contains("dark"));
+});
+
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   if (themeBtn) themeBtn.textContent = theme === "dark" ? "Light" : "Dark";

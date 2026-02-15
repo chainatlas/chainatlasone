@@ -1,0 +1,9 @@
+Powershell
+cd $env:USERPROFILE\Desktop\btc-tx-feed
+npm run dev
+
+Cloudflare.com : solymar84@web.de
+ 		 Lagomera2010
+
+Github:		solymar84@web.de
+		Lagomera2010.

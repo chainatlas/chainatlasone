@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="de">
   <head>
+
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <meta name="description" content="ChainAtlasOne is a real-time Bitcoin learning dashboard. Watch live transactions, block confirmations, supply, halving countdown and price data." />
@@ -11,7 +13,8 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://www.chainatlasone.com" />
 <meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
-
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
 	<title>ChainAtlasOne</title>
     	<link rel="icon" type="image/png" href="/favicon.png" />
   </head>
@@ -19,19 +22,22 @@
   <body>
     <div id="app">
       <!-- Top bar -->
-      <header class="topbar">
-        <div class="brand">
-          <div class="brandTitle">ChainAtlasOne<span class="dot">.com</span></div>
-        </div>
+     <header class="topbar">
+  <div class="brand">
+    <img src="/logo-dark.png" alt="ChainAtlasOne" class="logo logo-dark">
+    <img src="/logo-light.png" alt="ChainAtlasOne" class="logo logo-light">
+  </div>
 
-        <div class="topActions">
-          <span id="status" class="statusPill">Loading…</span>
-          <button id="pauseBtn" class="btn btnGhost" type="button">Pause</button>
-          <button id="themeBtn" class="btn btnIcon" type="button" title="Toggle theme" aria-label="Toggle theme">
-            <span class="iconMoon" aria-hidden="true">☾</span>
-          </button>
-        </div>
-      </header>
+  <div class="topActions">
+    <span id="status" class="statusPill">Loading…</span>
+    <button id="pauseBtn" class="btn btnGhost" type="button">Pause</button>
+    <button id="themeBtn" class="btn btnIcon" type="button" title="Toggle theme" aria-label="Toggle theme">
+      <span class="iconMoon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+
+
 
       <!-- Controls -->
       <section class="controls">
