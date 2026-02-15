@@ -624,3 +624,65 @@ html[data-theme="dark"] .logo-dark{ display:block; }
 html[data-theme="dark"] .logo-light{ display:none; }
 html[data-theme="light"] .logo-dark{ display:none; }
 html[data-theme="light"] .logo-light{ display:block; }
+
+/* ===========================
+   MOBILE FEED FINAL OVERRIDE
+   Time | Fee | Amount
+   =========================== */
+@media (max-width: 640px){
+
+  /* Header: 3 Spalten */
+  .feed-header{
+    display:grid !important;
+    grid-template-columns: 78px 1fr auto !important;
+    gap: 10px !important;
+    align-items:center;
+  }
+
+  /* Header-Labels: From/To weg */
+  #From, #To{ display:none !important; }
+
+  /* Header Fee/Amount in die richtigen Spalten */
+  #Time{ grid-column: 1; }
+  #Fee{ grid-column: 2; justify-self:start; }
+  #Amount{ grid-column: 3; justify-self:end; }
+
+  /* Rows: weiterhin 3 Spalten */
+  .row{
+    display:grid !important;
+    grid-template-columns: 78px 1fr auto !important;
+    gap: 10px !important;
+    align-items:center;
+    height: 44px;            /* bleibt kompakt */
+  }
+
+  /* Row: From/To (2,3) komplett ausblenden */
+  .row > :nth-child(2),
+  .row > :nth-child(3){
+    display:none !important;
+  }
+
+  /* Row: Fee (4) auf Spalte 2 legen */
+  .row > :nth-child(4){
+    display:block !important;
+    grid-column: 2 !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* Row: Amount (5) auf Spalte 3 legen */
+  .row > :nth-child(5){
+    display:block !important;
+    grid-column: 3 !important;
+    justify-self:end;
+    white-space:nowrap;
+  }
+
+  /* Amount optisch stärker */
+  .value{
+    font-size: 16px;
+    font-weight: 950;
+  }
+}
+
