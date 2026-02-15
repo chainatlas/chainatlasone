@@ -472,3 +472,220 @@ html[data-theme="dark"] .logo-dark{ display:block; }
 html[data-theme="dark"] .logo-light{ display:none; }
 html[data-theme="light"] .logo-dark{ display:none; }
 html[data-theme="light"] .logo-light{ display:block; }
+
+/* ===========================
+   MOBILE LAYOUT PATCH (ADD AT END)
+   Requires the small HTML tweaks you pasted earlier:
+   - feed header uses .col-time/.col-from/.col-to/.col-fee/.col-amount
+   - searchbar has .searchActions wrapper
+   =========================== */
+
+/* 1) Fix header overflow + allow wrapping */
+@media (max-width: 640px) {
+  #app {
+    margin: 14px auto;
+    padding: 0 12px 18px;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .brand {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .logo {
+    height: 46px; /* slightly smaller for mobile */
+  }
+
+  .topActions {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  .statusPill {
+    flex: 1 1 100%;
+  }
+
+  .btnIcon {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* 2) Controls: stack cleanly on mobile */
+@media (max-width: 640px) {
+  .controls {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .searchbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .searchbar input {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* wrapper added in HTML patch */
+  .searchActions {
+    display: flex;
+    gap: 8px;
+    flex: 1 1 100%;
+  }
+
+  .searchActions .btn {
+    flex: 1 1 50%;
+  }
+
+  .mined {
+    text-align: left;
+  }
+}
+
+/* 3) Block Factory: square on mobile (visual) */
+@media (max-width: 640px) {
+  #yard {
+    height: auto;            /* override fixed height */
+    aspect-ratio: 1 / 1;     /* make it square */
+  }
+
+  .vizTop {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .vizLegend {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+/* 4) Feed: hide From/To on mobile, make Amount prominent */
+@media (max-width: 640px) {
+  /* show header row (optional) but remove From/To labels */
+  .feed-header {
+    display: grid; /* override your current display:none */
+    grid-template-columns: 72px 64px 1fr;
+    gap: 10px;
+  }
+
+  .feed-header .col-from,
+  .feed-header .col-to {
+    display: none !important;
+  }
+
+  /* TX row layout: Time | Fee | Amount */
+  .row {
+    grid-template-columns: 72px 64px 1fr;
+    gap: 10px;
+    height: auto;
+    align-items: center;
+  }
+
+  /* Hide From + To in each row (assuming order: Time, From, To, Fee, Amount) */
+  .row > :nth-child(2),
+  .row > :nth-child(3) {
+    display: none !important;
+  }
+
+  /* Fee (now becomes the 2nd visible cell) */
+  .row > :nth-child(4) {
+    justify-self: end;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Amount (still last cell) bigger + right aligned */
+  .value {
+    font-size: 18px;
+    font-weight: 950;
+  }
+}
+
+/* 5) Remove old ID-based “cursor:help” targets (these IDs should no longer exist) */
+#Time, #From, #To, #Fee, #Amount { cursor: default; }
+/* ---- Feed preview: show ~4 tx rows, rest scroll ---- */
+:root{
+  --feed-preview-rows: 7;
+  --feed-row-gap: 10px;      /* matches .feed gap */
+  --feed-item-h: 44px;       /* matches .row height */
+  --feed-wrap-pad: 10px;     /* matches .feedWrap padding */
+}
+
+.feedWrap{
+  /* height ≈ 4 items + gaps + padding top/bottom */
+  max-height: calc(
+    (var(--feed-preview-rows) * var(--feed-item-h)) +
+    ((var(--feed-preview-rows) - 1) * var(--feed-row-gap)) +
+    (var(--feed-wrap-pad) * 2)
+  );
+  overflow-y: auto;
+}
+
+/* Details section spacing now that it's in the middle */
+.details{
+  margin: 14px 0;
+}
+
+
+/* ===============================
+   DETAILS – Premium Card Styling
+   =============================== */
+
+.details{
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1px solid var(--stroke);
+  border-radius: var(--cardR);
+  box-shadow: var(--shadow2);
+  padding: 16px 16px 18px;
+  margin: 14px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle top highlight like other cards */
+.details::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.05),
+    rgba(255,255,255,0) 40%
+  );
+  pointer-events:none;
+}
+
+/* Header */
+.detailsHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.details h2{
+  margin:0;
+  font-size: 14px;
+  letter-spacing:.08em;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+/* Content spacing */
+#detailsContent{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}

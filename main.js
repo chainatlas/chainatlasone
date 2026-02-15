@@ -32,12 +32,6 @@ const learnPriceEl = document.getElementById("learnPrice");
 const learnHalvingEl = document.getElementById("learnHalving");
 const learnFeedEl = document.getElementById("learnFeed");
 
-const timeHdrEl = document.getElementById("Time");
-const fromHdrEl = document.getElementById("From");
-const toHdrEl = document.getElementById("To");
-const feeHdrEl = document.getElementById("Fee");
-const amountHdrEl = document.getElementById("Amount");
-
 const minedDisplayEl = document.getElementById("minedDisplay");
 const subsidyValueEl = document.getElementById("subsidyValue");
 
@@ -108,6 +102,10 @@ function fmtUSD(x) {
 }
 function clearC(c, w, h) {
   c.clearRect(0, 0, w, h);
+}
+
+function isMobile() {
+  return window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
 }
 
 /* de-DE formatting */
@@ -265,13 +263,38 @@ renderLearnContent();
 
 /* Tooltip bindings */
 bindTip(minedDisplayEl, "Mined BTC", "Estimated BTC mined from the current block height (subsidy schedule).");
-window.addEventListener("DOMContentLoaded", () => {
-  bindTip(timeHdrEl, "Time", "When it was seen by the mempool feed (unconfirmed).");
-  bindTip(fromHdrEl, "From", "First input address (often one of many).");
-  bindTip(toHdrEl, "To", "Largest output address (often main receiver).");
-  bindTip(feeHdrEl, "Fee (sat/vB)", "Fee rate: satoshis per virtual byte.");
-  bindTip(amountHdrEl, "Amount (BTC)", "Total BTC moved (mempool.recent value).");
-});
+
+function bindFeedHeaderTips() {
+  // Backward compatible:
+  // - Old HTML had ids: Time/From/To/Fee/Amount
+  // - New HTML (recommended) has .col-time/.col-from/.col-to/.col-fee/.col-amount inside #feedHeader
+  const byId = (id) => document.getElementById(id);
+  const timeHdrEl = byId("Time");
+  const fromHdrEl = byId("From");
+  const toHdrEl = byId("To");
+  const feeHdrEl = byId("Fee");
+  const amountHdrEl = byId("Amount");
+
+  if (timeHdrEl || fromHdrEl || toHdrEl || feeHdrEl || amountHdrEl) {
+    bindTip(timeHdrEl, "Time", "When it was seen by the mempool feed (unconfirmed).");
+    bindTip(fromHdrEl, "From", "First input address (often one of many).");
+    bindTip(toHdrEl, "To", "Largest output address (often main receiver).");
+    bindTip(feeHdrEl, "Fee (sat/vB)", "Fee rate: satoshis per virtual byte.");
+    bindTip(amountHdrEl, "Amount (BTC)", "Total BTC moved (mempool.recent value).");
+    return;
+  }
+
+  const feedHeaderEl = document.getElementById("feedHeader");
+  if (!feedHeaderEl) return;
+
+  bindTip(feedHeaderEl.querySelector(".col-time"), "Time", "When it was seen by the mempool feed (unconfirmed).");
+  bindTip(feedHeaderEl.querySelector(".col-from"), "From", "First input address (often one of many).");
+  bindTip(feedHeaderEl.querySelector(".col-to"), "To", "Largest output address (often main receiver).");
+  bindTip(feedHeaderEl.querySelector(".col-fee"), "Fee (sat/vB)", "Fee rate: satoshis per virtual byte.");
+  bindTip(feedHeaderEl.querySelector(".col-amount"), "Amount (BTC)", "Total BTC moved (mempool.recent value).");
+}
+
+window.addEventListener("DOMContentLoaded", bindFeedHeaderTips);
 
 /* ---------------- Details ---------------- */
 closeDetailsBtn?.addEventListener("click", () => detailsEl.classList.add("hidden"));
@@ -279,6 +302,7 @@ closeDetailsBtn?.addEventListener("click", () => detailsEl.classList.add("hidden
 function openDetails(title, html) {
   detailsEl.classList.remove("hidden");
   detailsContentEl.innerHTML = `<div style="font-weight:900;margin-bottom:8px;">${title}</div>${html}`;
+detailsEl.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function satsToBtc(sats) {
   return (sats / 100000000).toFixed(8);
@@ -788,8 +812,8 @@ const BLOCK_W = 190;
 const BLOCK_H = 200;
 
 /* Critical: belt ends EXACTLY at the block LEFT EDGE */
-const BLOCK_LEFT_EDGE = BLOCK_X; // <-- THIS is where the block starts
-const BELT_END_X = BLOCK_LEFT_EDGE; // capsules are removed when their right edge reaches this
+const BLOCK_LEFT_EDGE = BLOCK_X;
+const BELT_END_X = BLOCK_LEFT_EDGE;
 
 const packages = [];
 
@@ -860,6 +884,13 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
 
   spawnPackage({ txid, btc, feeRate });
 
+  // Mobile optimization: From/To are hidden -> skip expensive tx detail fetch
+  if (isMobile()) {
+    fromEl.textContent = "—";
+    toEl.textContent = "—";
+    return;
+  }
+
   scheduleAddrFetch(async () => {
     try {
       const res = await fetch(`${API_BASE}/tx/${txid}`, { cache: "no-store" });
@@ -891,7 +922,24 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
     }
   });
 }
+let lastBeltSpawnAt = 0;
+const BELT_KEEPALIVE_MS = 700; // throttle
+const beltSeen = new Set();
+const BELT_SEEN_LIMIT = 500;
 
+function rememberBeltTx(txid) {
+  if (!txid) return;
+  beltSeen.add(txid);
+  if (beltSeen.size > BELT_SEEN_LIMIT) {
+    // cheap trim
+    const it = beltSeen.values();
+    for (let i = 0; i < 100; i++) {
+      const v = it.next().value;
+      if (v == null) break;
+      beltSeen.delete(v);
+    }
+  }
+}
 async function tick() {
   if (paused) return;
   if (!feedEl) return;
@@ -908,6 +956,37 @@ async function tick() {
       seen.add(txid);
       newOnes.push(tx);
       if (newOnes.length >= MAX_NEW_TX_PER_TICK) break;
+    }
+    // If there are no "new" txids (seen-filter), keep the factory alive by spawning from current snapshot.
+    if (newOnes.length === 0) {
+      const now = performance.now();
+      if (now - lastBeltSpawnAt > BELT_KEEPALIVE_MS) {
+        lastBeltSpawnAt = now;
+
+        // pick 1–2 txs from the snapshot that we haven't used for belt recently
+        const pick = [];
+        for (const tx of txs) {
+          const txid = tx.txid || tx.txId || tx.hash;
+          if (!txid) continue;
+          if (beltSeen.has(txid)) continue;
+          pick.push(tx);
+          rememberBeltTx(txid);
+          if (pick.length >= 2) break;
+        }
+
+        for (const tx of pick) {
+          const txid = tx.txid || tx.txId || tx.hash;
+          const fee = tx.fee ?? tx.fees;
+          const vsize = tx.vsize ?? tx.virtualSize ?? tx.size;
+          const valueSats = tx.value ?? tx.amount ?? null;
+
+          const feeRate = fee && vsize ? fee / vsize : null;
+          const btc = valueSats != null ? valueSats / 100000000 : null;
+
+          // IMPORTANT: only spawn package, do NOT add to feed again
+          spawnPackage({ txid, btc, feeRate });
+        }
+      }
     }
 
     const frag = document.createDocumentFragment();
@@ -962,11 +1041,18 @@ async function checkBlocks() {
 /* ---------------- Premium Block Factory Canvas ---------------- */
 function resizeCanvasToDisplaySize() {
   if (!canvas) return;
+
   const dpr = window.devicePixelRatio || 1;
-  const cssW = canvas.clientWidth;
-  const cssH = canvas.clientHeight;
+  const rect = canvas.getBoundingClientRect();
+  const cssW = Math.max(1, rect.width || canvas.clientWidth || 1);
+
+  // On mobile we force a square canvas (CSS uses aspect-ratio:1/1; height:auto),
+  // so compute height from width to avoid 0-height cases.
+  const cssH = isMobile() ? cssW : Math.max(1, rect.height || canvas.clientHeight || 260);
+
   const w = Math.max(1, Math.round(cssW * dpr));
   const h = Math.max(1, Math.round(cssH * dpr));
+
   if (canvas.width !== w || canvas.height !== h) {
     canvas.width = w;
     canvas.height = h;
@@ -1026,12 +1112,19 @@ function drawFactory() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // ✅ No centering / no letterboxing -> content is flush to canvas edges
-  const sx = W / BASE_W;
-  const sy = H / BASE_H;
+  // Desktop/tablet: original stretch-to-fill
+  // Mobile: uniform scale inside square canvas (no vertical distortion)
+  const fillMode = !isMobile();
+  const sx = fillMode ? W / BASE_W : Math.min(W / BASE_W, H / BASE_H);
+  const sy = fillMode ? H / BASE_H : sx;
 
-  const X = (u) => u * sx;
-  const Y = (v) => v * sy;
+  const stageW = BASE_W * sx;
+  const stageH = BASE_H * sy;
+  const offX = fillMode ? 0 : (W - stageW) / 2;
+  const offY = fillMode ? 0 : (H - stageH) / 2;
+
+  const X = (u) => offX + u * sx;
+  const Y = (v) => offY + v * sy;
   const Sx = (n) => n * sx;
   const Sy = (n) => n * sy;
 
@@ -1050,7 +1143,6 @@ function drawFactory() {
   }
 
   function drawBeltFuturistic({ beltX, beltY, beltW, beltH }) {
-    // base body
     const g = ctx.createLinearGradient(0, beltY, 0, beltY + beltH);
     g.addColorStop(0, isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)");
     g.addColorStop(0.55, isDark ? "rgba(255,255,255,0.045)" : "rgba(0,0,0,0.03)");
@@ -1058,7 +1150,6 @@ function drawFactory() {
     ctx.fillStyle = g;
     ctx.fillRect(beltX, beltY, beltW, beltH);
 
-    // bevel borders
     ctx.save();
     ctx.strokeStyle = isDark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.12)";
     ctx.lineWidth = Math.max(1, Math.min(Sx(1.2), Sy(1.2)));
@@ -1067,7 +1158,6 @@ function drawFactory() {
     ctx.strokeRect(beltX + Sx(2.5), beltY + Sy(2.5), beltW - Sx(5), beltH - Sy(5));
     ctx.restore();
 
-    // segmented treads + scan
     ctx.save();
     ctx.beginPath();
     ctx.rect(beltX, beltY, beltW, beltH);
@@ -1100,7 +1190,6 @@ function drawFactory() {
     ctx.fillRect(beltX, beltY, beltW, beltH);
     ctx.restore();
 
-    // top data rail
     const railY = beltY + Sy(9);
     const railH = Sy(2);
     const rg = ctx.createLinearGradient(beltX, 0, beltX + beltW, 0);
@@ -1110,7 +1199,6 @@ function drawFactory() {
     ctx.fillStyle = rg;
     ctx.fillRect(beltX + Sx(10), railY, beltW - Sx(20), railH);
 
-    // micro-noise
     ctx.save();
     ctx.globalAlpha = isDark ? 0.05 : 0.03;
     ctx.fillStyle = "rgba(255,255,255,1)";
@@ -1125,11 +1213,17 @@ function drawFactory() {
   function drawBlockFuturistic({ x, y, w, h }) {
     const rr = Math.min(Sx(24), Sy(24));
 
-    // outer glow (breathing)
     const pulse = 0.55 + 0.45 * Math.sin(animTime * 2.2);
     ctx.save();
     ctx.globalAlpha = (isDark ? 0.22 : 0.14) * pulse;
-    const glow = ctx.createRadialGradient(x + w * 0.6, y + h * 0.45, Sy(10), x + w * 0.6, y + h * 0.45, w * 1.15);
+    const glow = ctx.createRadialGradient(
+      x + w * 0.6,
+      y + h * 0.45,
+      Sy(10),
+      x + w * 0.6,
+      y + h * 0.45,
+      w * 1.15
+    );
     glow.addColorStop(0, "rgba(25,195,125,1)");
     glow.addColorStop(0.5, "rgba(122,170,255,0.65)");
     glow.addColorStop(1, "rgba(0,0,0,0)");
@@ -1137,7 +1231,6 @@ function drawFactory() {
     ctx.fillRect(x - w * 0.35, y - h * 0.35, w * 1.7, h * 1.7);
     ctx.restore();
 
-    // shadow
     ctx.save();
     ctx.globalAlpha = isDark ? 0.55 : 0.22;
     ctx.fillStyle = "rgba(0,0,0,1)";
@@ -1147,7 +1240,6 @@ function drawFactory() {
     ctx.filter = "none";
     ctx.restore();
 
-    // body
     const body = ctx.createLinearGradient(0, y, 0, y + h);
     body.addColorStop(0, isDark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.75)");
     body.addColorStop(0.55, isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.42)");
@@ -1156,7 +1248,6 @@ function drawFactory() {
     roundRectPath(ctx, x, y, w, h, rr);
     ctx.fill();
 
-    // emissive edge frame
     const edge = ctx.createLinearGradient(x, 0, x + w, 0);
     edge.addColorStop(0, "rgba(122,170,255,0.55)");
     edge.addColorStop(0.5, "rgba(242,193,78,0.45)");
@@ -1169,7 +1260,6 @@ function drawFactory() {
     ctx.stroke();
     ctx.restore();
 
-    // inner bevel
     ctx.save();
     ctx.strokeStyle = isDark ? "rgba(0,0,0,0.32)" : "rgba(0,0,0,0.10)";
     ctx.lineWidth = Math.max(1, Math.min(Sx(1.2), Sy(1.2)));
@@ -1177,7 +1267,6 @@ function drawFactory() {
     ctx.stroke();
     ctx.restore();
 
-    // glossy top slice
     ctx.save();
     const gloss = ctx.createLinearGradient(0, y, 0, y + h * 0.55);
     gloss.addColorStop(0, isDark ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.60)");
@@ -1187,7 +1276,6 @@ function drawFactory() {
     ctx.fill();
     ctx.restore();
 
-    // subtle circuit lines + animated data dot
     ctx.save();
     ctx.globalAlpha = isDark ? 0.10 : 0.07;
     ctx.strokeStyle = isDark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.9)";
@@ -1217,7 +1305,6 @@ function drawFactory() {
 
     ctx.restore();
 
-    // LEDs
     const ledY = y + Sy(22);
     const ledX = x + Sx(18);
     const ledGap = Sx(14);
@@ -1244,7 +1331,6 @@ function drawFactory() {
     led(1, "rgba(242,193,78,1)", ledA * 0.6);
     led(2, "rgba(25,195,125,1)", ledA);
 
-    // text
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
@@ -1275,7 +1361,7 @@ function drawFactory() {
     ctx.textBaseline = "alphabetic";
   }
 
-  /* ---------- Background (your existing premium bg) ---------- */
+  /* ---------- Background ---------- */
   const bg = ctx.createLinearGradient(0, 0, 0, H);
   if (isDark) {
     bg.addColorStop(0, "#070a12");
@@ -1300,7 +1386,6 @@ function drawFactory() {
   ctx.fillStyle = haze;
   ctx.fillRect(0, 0, W, H);
 
-  // micro grid
   ctx.save();
   ctx.globalAlpha = isDark ? 0.08 : 0.06;
   ctx.strokeStyle = isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.16)";
@@ -1321,7 +1406,6 @@ function drawFactory() {
   }
   ctx.restore();
 
-  // particles
   ctx.save();
   for (const p of particles) {
     const px = X(p.x);
@@ -1334,24 +1418,21 @@ function drawFactory() {
   }
   ctx.restore();
 
-  /* ---------- Geometry (belt ends exactly at block edge) ---------- */
+  /* ---------- Geometry ---------- */
   const blockX = X(BLOCK_X);
   const blockY = Y(BLOCK_Y);
   const blockW = Sx(BLOCK_W);
   const blockH = Sy(BLOCK_H);
 
-  const beltX = 0;
+  const beltX = X(0);
   const beltY = Y(BELT_Y);
   const beltH = Sy(BELT_H);
+  const beltW = blockX - X(0);
 
-  // ✅ belt ends at block edge (not inside)
-  const beltW = blockX;
-
-  /* ---------- Draw belt then block (block covers belt seam) ---------- */
   drawBeltFuturistic({ beltX, beltY, beltW, beltH });
   drawBlockFuturistic({ x: blockX, y: blockY, w: blockW, h: blockH });
 
-  /* ---------- Capsules (your existing capsule rendering; unchanged) ---------- */
+  /* ---------- Capsules ---------- */
   for (const p of packages) {
     const band = feeBand(p.feeRate);
     const [r, g, b] = feeGlowColor(band);
@@ -1362,7 +1443,6 @@ function drawFactory() {
 
     const py = beltY + (beltH - ph) / 2;
 
-    // shadow
     ctx.save();
     ctx.globalAlpha = isDark ? 0.55 : 0.25;
     ctx.fillStyle = "rgba(0,0,0,1)";
@@ -1372,7 +1452,6 @@ function drawFactory() {
     ctx.filter = "none";
     ctx.restore();
 
-    // glow ring
     ctx.save();
     ctx.globalAlpha = isDark ? 0.9 : 0.55;
     ctx.strokeStyle = `rgba(${r},${g},${b},${isDark ? 0.55 : 0.30})`;
@@ -1383,7 +1462,6 @@ function drawFactory() {
     ctx.filter = "none";
     ctx.restore();
 
-    // body
     const bodyGrad2 = ctx.createLinearGradient(0, py, 0, py + ph);
     bodyGrad2.addColorStop(0, isDark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.70)");
     bodyGrad2.addColorStop(0.55, isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.42)");
@@ -1392,13 +1470,11 @@ function drawFactory() {
     roundRectPath(ctx, px, py, pw, ph, 999);
     ctx.fill();
 
-    // inner line
     ctx.strokeStyle = isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
     ctx.lineWidth = Math.max(1, Math.min(Sx(1), Sy(1)));
     roundRectPath(ctx, px + Sx(2), py + Sy(2), pw - Sx(4), ph - Sy(4), 999);
     ctx.stroke();
 
-    // LED dot
     ctx.save();
     ctx.globalAlpha = isDark ? 0.95 : 0.75;
     ctx.fillStyle = `rgba(${r},${g},${b},1)`;
@@ -1413,7 +1489,6 @@ function drawFactory() {
     ctx.filter = "none";
     ctx.restore();
 
-    // label
     if (p.label) {
       ctx.save();
       ctx.fillStyle = isDark ? "rgba(235,240,248,0.90)" : "rgba(20,20,24,0.78)";
@@ -1425,7 +1500,6 @@ function drawFactory() {
     }
   }
 
-  // subtle frame line
   ctx.save();
   ctx.globalAlpha = isDark ? 0.45 : 0.25;
   ctx.strokeStyle = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.10)";
@@ -1443,7 +1517,6 @@ function animate(t) {
   animTime += dt;
   lastT = t;
 
-  // particles drift (BASE units)
   for (const p of particles) {
     p.x += p.vx * dt;
     p.y += p.vy * dt;
@@ -1464,7 +1537,6 @@ function animate(t) {
 
   for (const p of packages) p.x += p.speed * dt;
 
-  // ✅ Intake: remove capsule when its RIGHT edge reaches the BLOCK LEFT EDGE
   for (let i = packages.length - 1; i >= 0; i--) {
     const p = packages[i];
     if (p.x + p.w >= BELT_END_X) {
@@ -1473,7 +1545,6 @@ function animate(t) {
     }
   }
 
-  // keep spacing
   const GAP = 14;
   for (let i = 1; i < packages.length; i++) {
     const front = packages[i - 1];
@@ -1482,7 +1553,12 @@ function animate(t) {
     if (me.x > maxX) me.x = maxX;
   }
 
-  drawFactory();
+   try {
+    drawFactory();
+  } catch (e) {
+    console.log("drawFactory error:", e);
+  }
+
   requestAnimationFrame(animate);
 }
 
