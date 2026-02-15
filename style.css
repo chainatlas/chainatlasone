@@ -626,63 +626,86 @@ html[data-theme="light"] .logo-dark{ display:none; }
 html[data-theme="light"] .logo-light{ display:block; }
 
 /* ===========================
-   MOBILE FEED FINAL OVERRIDE
+   MOBILE FEED FINAL OVERRIDE (FIXED)
    Time | Fee | Amount
    =========================== */
 @media (max-width: 640px){
 
-  /* Header: 3 Spalten */
+  :root{
+    --feed-cols: 78px 1fr auto;
+  }
+
+  /* ---------- HEADER ---------- */
   .feed-header{
     display:grid !important;
-    grid-template-columns: 78px 1fr auto !important;
+    grid-template-columns: var(--feed-cols) !important;
     gap: 10px !important;
-    align-items:center;
+    align-items:center !important;
   }
 
-  /* Header-Labels: From/To weg */
+  /* Header hat 5 Kinder (Time, From, To, Fee, Amount) -> From/To komplett weg */
+  .feed-header > :nth-child(2),
+  .feed-header > :nth-child(3){
+    display:none !important;
+  }
+
+  /* Fee + Amount auf Zeile 1 erzwingen */
+  .feed-header > :nth-child(1){
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+  .feed-header > :nth-child(4){
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    white-space: nowrap;
+  }
+  .feed-header > :nth-child(5){
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    justify-self: end !important;
+    white-space: nowrap;
+  }
+
+  /* IDs optional ausblenden (falls vorhanden) */
   #From, #To{ display:none !important; }
 
-  /* Header Fee/Amount in die richtigen Spalten */
-  #Time{ grid-column: 1; }
-  #Fee{ grid-column: 2; justify-self:start; }
-  #Amount{ grid-column: 3; justify-self:end; }
-
-  /* Rows: weiterhin 3 Spalten */
+  /* ---------- ROWS ---------- */
   .row{
     display:grid !important;
-    grid-template-columns: 78px 1fr auto !important;
+    grid-template-columns: var(--feed-cols) !important;
     gap: 10px !important;
-    align-items:center;
-    height: 44px;            /* bleibt kompakt */
+    align-items:center !important;
+    height: 44px !important;
   }
 
-  /* Row: From/To (2,3) komplett ausblenden */
+  /* From-slot / To-slot raus */
   .row > :nth-child(2),
   .row > :nth-child(3){
     display:none !important;
   }
 
-  /* Row: Fee (4) auf Spalte 2 legen */
+  /* Fee (4) -> Spalte 2, Zeile 1 */
   .row > :nth-child(4){
     display:block !important;
     grid-column: 2 !important;
+    grid-row: 1 !important;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
 
-  /* Row: Amount (5) auf Spalte 3 legen */
+  /* Amount (5) -> Spalte 3, Zeile 1 */
   .row > :nth-child(5){
     display:block !important;
     grid-column: 3 !important;
-    justify-self:end;
+    grid-row: 1 !important;
+    justify-self:end !important;
     white-space:nowrap;
   }
 
   /* Amount optisch stärker */
   .value{
-    font-size: 16px;
-    font-weight: 950;
+    font-size: 16px !important;
+    font-weight: 950 !important;
   }
 }
-
