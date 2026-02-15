@@ -103,7 +103,6 @@ function fmtUSD(x) {
 function clearC(c, w, h) {
   c.clearRect(0, 0, w, h);
 }
-
 function isMobile() {
   return window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
 }
@@ -265,9 +264,6 @@ renderLearnContent();
 bindTip(minedDisplayEl, "Mined BTC", "Estimated BTC mined from the current block height (subsidy schedule).");
 
 function bindFeedHeaderTips() {
-  // Backward compatible:
-  // - Old HTML had ids: Time/From/To/Fee/Amount
-  // - New HTML (recommended) has .col-time/.col-from/.col-to/.col-fee/.col-amount inside #feedHeader
   const byId = (id) => document.getElementById(id);
   const timeHdrEl = byId("Time");
   const fromHdrEl = byId("From");
@@ -302,7 +298,7 @@ closeDetailsBtn?.addEventListener("click", () => detailsEl.classList.add("hidden
 function openDetails(title, html) {
   detailsEl.classList.remove("hidden");
   detailsContentEl.innerHTML = `<div style="font-weight:900;margin-bottom:8px;">${title}</div>${html}`;
-detailsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  detailsEl.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function satsToBtc(sats) {
   return (sats / 100000000).toFixed(8);
@@ -842,7 +838,12 @@ function spawnPackage({ txid, btc, feeRate }) {
   const x = last ? last.x - w - GAP : -w;
 
   packages.push({ txid, btc, feeRate, label, x, w, h, speed });
-  if (packages.length > 140) packages.splice(0, packages.length - 140);
+
+  /* ✅ FIX: if we must cap, remove newest (off-screen left), NOT the oldest (visible) */
+  const KEEP = 140;
+  if (packages.length > KEEP) {
+    packages.splice(KEEP); // removes from the end
+  }
 }
 
 function addItem({ txid, fee, vsize, valueSats }, fragment) {
@@ -866,15 +867,6 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
 
   const feeText = feeRate != null ? `${feeRate.toFixed(1)} sat/vB` : "—";
 
-  if (isMobile()) {
-  li.innerHTML = `
-    <div class="row row-mobile">
-      <div class="timecell muted"><span>${fmtDateTime()}</span></div>
-      <div class="muted feeCell">${feeText}</div>
-      <div class="value right ${isBig ? "big" : ""}">${amountText}</div>
-    </div>
-  `;
-} else {
   li.innerHTML = `
     <div class="row">
       <div class="timecell muted"><span>${fmtDateTime()}</span></div>
@@ -884,11 +876,6 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
       <div class="value right ${isBig ? "big" : ""}">${amountText}</div>
     </div>
   `;
-
-  li.querySelector(".from-slot")?.appendChild(fromEl);
-  li.querySelector(".to-slot")?.appendChild(toEl);
-}
-
 
   li.querySelector(".from-slot")?.appendChild(fromEl);
   li.querySelector(".to-slot")?.appendChild(toEl);
@@ -936,8 +923,9 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
     }
   });
 }
+
 let lastBeltSpawnAt = 0;
-const BELT_KEEPALIVE_MS = 700; // throttle
+const BELT_KEEPALIVE_MS = 700;
 const beltSeen = new Set();
 const BELT_SEEN_LIMIT = 500;
 
@@ -945,7 +933,6 @@ function rememberBeltTx(txid) {
   if (!txid) return;
   beltSeen.add(txid);
   if (beltSeen.size > BELT_SEEN_LIMIT) {
-    // cheap trim
     const it = beltSeen.values();
     for (let i = 0; i < 100; i++) {
       const v = it.next().value;
@@ -954,6 +941,7 @@ function rememberBeltTx(txid) {
     }
   }
 }
+
 async function tick() {
   if (paused) return;
   if (!feedEl) return;
@@ -971,13 +959,13 @@ async function tick() {
       newOnes.push(tx);
       if (newOnes.length >= MAX_NEW_TX_PER_TICK) break;
     }
-    // If there are no "new" txids (seen-filter), keep the factory alive by spawning from current snapshot.
+
+    // Keepalive spawn if feed snapshot repeats
     if (newOnes.length === 0) {
       const now = performance.now();
       if (now - lastBeltSpawnAt > BELT_KEEPALIVE_MS) {
         lastBeltSpawnAt = now;
 
-        // pick 1–2 txs from the snapshot that we haven't used for belt recently
         const pick = [];
         for (const tx of txs) {
           const txid = tx.txid || tx.txId || tx.hash;
@@ -997,7 +985,6 @@ async function tick() {
           const feeRate = fee && vsize ? fee / vsize : null;
           const btc = valueSats != null ? valueSats / 100000000 : null;
 
-          // IMPORTANT: only spawn package, do NOT add to feed again
           spawnPackage({ txid, btc, feeRate });
         }
       }
@@ -1022,7 +1009,7 @@ async function tick() {
 }
 
 /* ---------------- Block polling + factory state ---------------- */
-let blockState = "collecting"; // collecting | confirmed
+let blockState = "collecting";
 let confirmTimer = 0;
 const CONFIRM_DISPLAY_SECONDS = 1.5;
 let currentBlockTxCount = 0;
@@ -1123,8 +1110,6 @@ function drawFactory() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // Desktop/tablet: original stretch-to-fill
-  // Mobile: uniform scale inside square canvas (no vertical distortion)
   const fillMode = !isMobile();
   const sx = fillMode ? W / BASE_W : Math.min(W / BASE_W, H / BASE_H);
   const sy = fillMode ? H / BASE_H : sx;
@@ -1141,7 +1126,6 @@ function drawFactory() {
 
   ctx.clearRect(0, 0, W, H);
 
-  /* ---------- helpers (local to drawFactory) ---------- */
   function hashNoise(i) {
     const x = Math.sin(i * 12.9898) * 43758.5453;
     return x - Math.floor(x);
@@ -1390,7 +1374,14 @@ function drawFactory() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 
-  const haze = ctx.createRadialGradient(X(160), Y(30), Math.min(Sx(12), Sy(12)), X(160), Y(30), Math.max(Sx(520), Sy(520)));
+  const haze = ctx.createRadialGradient(
+    X(160),
+    Y(30),
+    Math.min(Sx(12), Sy(12)),
+    X(160),
+    Y(30),
+    Math.max(Sx(520), Sy(520))
+  );
   haze.addColorStop(0, isDark ? "rgba(0,160,255,0.08)" : "rgba(0,160,255,0.06)");
   haze.addColorStop(0.5, isDark ? "rgba(25,195,125,0.04)" : "rgba(25,195,125,0.04)");
   haze.addColorStop(1, "rgba(0,0,0,0)");
@@ -1564,7 +1555,7 @@ function animate(t) {
     if (me.x > maxX) me.x = maxX;
   }
 
-   try {
+  try {
     drawFactory();
   } catch (e) {
     console.log("drawFactory error:", e);
