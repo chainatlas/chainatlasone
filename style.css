@@ -21,7 +21,14 @@
   --cardR: 18px;
   --blur: blur(16px);
 
+  /* Desktop feed grid: Time | From | To | Fee | Amount */
   --feed-cols: 90px 1fr 1fr 90px 190px;
+
+  /* Feed preview sizing */
+  --feed-preview-rows: 7;
+  --feed-row-gap: 10px;      /* matches .feed gap */
+  --feed-item-h: 44px;       /* matches .row height */
+  --feed-wrap-pad: 10px;     /* matches .feedWrap padding */
 }
 
 :root[data-theme="dark"]{
@@ -274,8 +281,6 @@ body{
   display:block;
   border-radius: 16px;
   border: 1px solid var(--stroke);
-
-  /* ✅ remove the “blue cast” by keeping canvas neutral */
   background: rgba(0,0,0,.04);
 }
 
@@ -304,10 +309,7 @@ body{
 .learnInline ul{ margin:8px 0 0 18px; color: var(--muted); }
 .learnInline .t{ font-weight: 950; margin-bottom: 6px; }
 
-/* ✅ spacing fix specifically for the feed learn box (gap like others) */
-.feedSection #learnFeed{
-  margin-bottom: 12px;
-}
+.feedSection #learnFeed{ margin-bottom: 12px; }
 
 /* Tooltip */
 .tooltip{
@@ -332,6 +334,7 @@ body{
 
 /* Feed */
 .feedSection{ margin-top: 6px; }
+
 .feed-header,
 .row{
   display:grid;
@@ -339,20 +342,25 @@ body{
   gap: 14px;
   align-items:center;
 }
+
 .feed-header{
   padding: 10px 12px;
   font-size: 12px;
   color: var(--muted);
   font-weight: 950;
   letter-spacing: .02em;
-
-  /* keep header separation consistent */
   margin-bottom: 10px;
 }
+
 .feedWrap{
-  max-height: 520px;
+  /* preview height: show N rows, then scroll */
+  max-height: calc(
+    (var(--feed-preview-rows) * var(--feed-item-h)) +
+    ((var(--feed-preview-rows) - 1) * var(--feed-row-gap)) +
+    (var(--feed-wrap-pad) * 2)
+  );
   overflow-y: auto;
-  padding: 10px;
+  padding: var(--feed-wrap-pad);
 }
 
 .feed{
@@ -361,7 +369,7 @@ body{
   margin:0;
   display:flex;
   flex-direction:column;
-  gap: 10px;
+  gap: var(--feed-row-gap);
 }
 
 .item{
@@ -372,7 +380,7 @@ body{
 }
 .item:hover{ border-color: var(--stroke2); }
 
-.row{ height: 44px; }
+.row{ height: var(--feed-item-h); }
 .row > *{ min-width:0; }
 
 .addr{
@@ -404,10 +412,11 @@ body{
   box-shadow: 0 0 0 1px rgba(25,195,125,.12) inset;
 }
 
-/* Details */
+/* Details (base) */
 .details{ margin-top: 14px; padding: 12px 12px 14px; }
 .detailsHeader{ display:flex; align-items:center; justify-content:space-between; gap: 10px; }
 .details h2{ margin:0; font-size: 16px; }
+
 .detailsGrid{
   display:grid;
   grid-template-columns: 160px 1fr;
@@ -417,6 +426,7 @@ body{
 .k{ color: var(--muted); font-size: 12px; }
 .v{ font-size: 13px; }
 .mono{ font-family: ui-monospace, Menlo, Monaco, Consolas, monospace; }
+
 .badge{
   display:inline-block;
   padding:2px 10px;
@@ -440,9 +450,10 @@ body{
   background: rgba(255,255,255,.02);
 }
 
+/* keep tooltips on header labels (desktop) */
 #Time, #From, #To, #Fee, #Amount{ cursor: help; }
 
-/* Responsive */
+/* Responsive (tablet) */
 @media (max-width: 980px){
   .controls{ grid-template-columns: 160px 1fr; }
   .mined{ grid-column: 1 / -1; text-align:left; }
@@ -450,220 +461,115 @@ body{
   :root{ --feed-cols: 90px 1fr 1fr 90px 160px; }
 }
 
-/* Mobile feed */
-@media (max-width: 640px){
-  :root{ --feed-cols: 70px 1fr 90px; }
-  .feed-header{ display:none; }
-
-  /* Standard rows (falls irgendwo noch 5-spaltig gerendert wird) */
-  .row{ grid-template-columns: var(--feed-cols); gap: 10px; }
-
-  /* Nur bei NICHT-mobile-rows 3+4 verstecken */
-  .row:not(.row-mobile) > :nth-child(3),
-  .row:not(.row-mobile) > :nth-child(4){
-    display:none;
-  }
-
-  /* Mobile 3-spaltig: Time | Fee | Amount */
-  .row.row-mobile{
-    grid-template-columns: 78px 1fr auto;
-    gap: 10px;
-    align-items:center;
-  }
-  .row.row-mobile > :nth-child(3){
-    display:block; /* Amount muss sichtbar sein */
-  }
-
-  .feeCell{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-}
-
-/* Logo */
-.logo{
-  height: 52px;
-  width: auto;
-  display: block;
-}
-.logo-dark{ display:block; }
-.logo-light{ display:none; }
-
-html[data-theme="dark"] .logo-dark{ display:block; }
-html[data-theme="dark"] .logo-light{ display:none; }
-html[data-theme="light"] .logo-dark{ display:none; }
-html[data-theme="light"] .logo-light{ display:block; }
-
 /* ===========================
-   MOBILE LAYOUT PATCH (ADD AT END)
-   Requires the small HTML tweaks you pasted earlier:
-   - feed header uses .col-time/.col-from/.col-to/.col-fee/.col-amount
-   - searchbar has .searchActions wrapper
+   Mobile (<= 640px) – CLEAN
    =========================== */
+@media (max-width: 640px){
 
-/* 1) Fix header overflow + allow wrapping */
-@media (max-width: 640px) {
-  #app {
+  /* app padding */
+  #app{
     margin: 14px auto;
     padding: 0 12px 18px;
   }
 
-  .topbar {
+  /* topbar wraps */
+  .topbar{
     flex-wrap: wrap;
     gap: 10px;
   }
-
-  .brand {
+  .brand{
     flex: 1 1 100%;
     min-width: 0;
   }
-
-  .logo {
-    height: 46px; /* slightly smaller for mobile */
-  }
-
-  .topActions {
+  .logo{ height: 46px; }
+  .topActions{
     flex: 1 1 100%;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: flex-start;
   }
+  .statusPill{ flex: 1 1 100%; }
 
-  .statusPill {
-    flex: 1 1 100%;
-  }
-
-  .btnIcon {
-    width: 42px;
-    height: 42px;
-  }
-}
-
-/* 2) Controls: stack cleanly on mobile */
-@media (max-width: 640px) {
-  .controls {
+  /* controls stack */
+  .controls{
     grid-template-columns: 1fr;
     gap: 10px;
   }
-
-  .searchbar {
+  .searchbar{
     flex-wrap: wrap;
     gap: 8px;
   }
-
-  .searchbar input {
+  .searchbar input{
     flex: 1 1 100%;
     width: 100%;
     min-width: 0;
   }
+  .mined{ text-align:left; }
 
-  /* wrapper added in HTML patch */
-  .searchActions {
-    display: flex;
-    gap: 8px;
-    flex: 1 1 100%;
-  }
-
-  .searchActions .btn {
-    flex: 1 1 50%;
-  }
-
-  .mined {
-    text-align: left;
-  }
-}
-
-/* 3) Block Factory: square on mobile (visual) */
-@media (max-width: 640px) {
-  #yard {
-    height: auto;            /* override fixed height */
-    aspect-ratio: 1 / 1;     /* make it square */
-  }
-
-  .vizTop {
+  /* Block Factory: smaller + less vertical space */
+  .viz{ padding: 10px; margin-bottom: 12px; }
+  .vizTop{
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: 6px;
   }
-
-  .vizLegend {
+  .vizLegend{
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-}
+  #yard{
+    height: 130px;          /* compact */
+    border-radius: 14px;
+  }
 
-/* 4) Feed: hide From/To on mobile, make Amount prominent */
-@media (max-width: 640px) {
-  /* show header row (optional) but remove From/To labels */
-  .feed-header {
-    display: grid; /* override your current display:none */
-    grid-template-columns: 72px 64px 1fr;
+  /* Feed: 3 columns (Time | Fee | Amount) and ALWAYS show Amount */
+  :root{
+    --feed-cols: 78px 1fr auto;
+    --feed-preview-rows: 7; /* adjust if you want 5 */
+  }
+
+  /* header row visible on mobile */
+  .feed-header{
+    display:grid;
+    grid-template-columns: var(--feed-cols);
     gap: 10px;
   }
+  /* hide From/To labels in header */
+  #From, #To{ display:none; }
 
-  .feed-header .col-from,
-  .feed-header .col-to {
-    display: none !important;
-  }
-
-  /* TX row layout: Time | Fee | Amount */
-  .row {
-    grid-template-columns: 72px 64px 1fr;
+  /* rows: force 3-col grid, hide from/to cells if present */
+  .row{
+    grid-template-columns: var(--feed-cols);
     gap: 10px;
-    height: auto;
-    align-items: center;
+    height: var(--feed-item-h);
+    align-items:center;
   }
 
-  /* Hide From + To in each row (assuming order: Time, From, To, Fee, Amount) */
+  /* if desktop markup still renders: Time, From, To, Fee, Amount */
   .row > :nth-child(2),
-  .row > :nth-child(3) {
-    display: none !important;
+  .row > :nth-child(3){
+    display:none !important;
   }
 
-  /* Fee (now becomes the 2nd visible cell) */
-  .row > :nth-child(4) {
-    justify-self: end;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+  /* fee cell should not wrap */
+  .row > :nth-child(4){
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
 
-  /* Amount (still last cell) bigger + right aligned */
-  .value {
-    font-size: 18px;
+  /* amount stays right and readable */
+  .value{
+    justify-self:end;
+    white-space:nowrap;
+    font-size: 16px; /* bump a bit for mobile */
     font-weight: 950;
   }
 }
 
-/* 5) Remove old ID-based “cursor:help” targets (these IDs should no longer exist) */
-#Time, #From, #To, #Fee, #Amount { cursor: default; }
-/* ---- Feed preview: show ~4 tx rows, rest scroll ---- */
-:root{
-  --feed-preview-rows: 7;
-  --feed-row-gap: 10px;      /* matches .feed gap */
-  --feed-item-h: 44px;       /* matches .row height */
-  --feed-wrap-pad: 10px;     /* matches .feedWrap padding */
-}
-
-.feedWrap{
-  /* height ≈ 4 items + gaps + padding top/bottom */
-  max-height: calc(
-    (var(--feed-preview-rows) * var(--feed-item-h)) +
-    ((var(--feed-preview-rows) - 1) * var(--feed-row-gap)) +
-    (var(--feed-wrap-pad) * 2)
-  );
-  overflow-y: auto;
-}
-
-/* Details section spacing now that it's in the middle */
-.details{
-  margin: 14px 0;
-}
-
-
 /* ===============================
    DETAILS – Premium Card Styling
    =============================== */
-
 .details{
   background: linear-gradient(180deg, var(--panel), var(--panel2));
   border: 1px solid var(--stroke);
@@ -675,20 +581,14 @@ html[data-theme="light"] .logo-light{ display:block; }
   overflow: hidden;
 }
 
-/* Subtle top highlight like other cards */
 .details::before{
   content:"";
   position:absolute;
   inset:0;
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.05),
-    rgba(255,255,255,0) 40%
-  );
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 40%);
   pointer-events:none;
 }
 
-/* Header */
 .detailsHeader{
   display:flex;
   align-items:center;
@@ -705,34 +605,22 @@ html[data-theme="light"] .logo-light{ display:block; }
   font-weight: 900;
 }
 
-/* Content spacing */
 #detailsContent{
   display:flex;
   flex-direction:column;
   gap: 12px;
 }
-@media (max-width: 640px){
-  /* weniger Außen-/Innenraum im Block Factory Card */
-  .viz{ padding: 12px; }
-  .vizTop{ margin-bottom: 8px; }
 
-  /* Canvas wieder "wide" statt riesig */
-  #yard{
-    height: 170px;         /* 180–220 je nach Geschmack */
-    border-radius: 14px;
-  }
+/* Logo */
+.logo{
+  height: 52px;
+  width: auto;
+  display: block;
 }
-@media (max-width: 640px){
-  .row.row-mobile{
-    display:grid;
-    grid-template-columns: 78px 1fr auto; /* Time | Fee | Amount */
-    gap: 10px;
-    align-items:center;
-    height: 44px;
-  }
-  .feeCell{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-}
+.logo-dark{ display:block; }
+.logo-light{ display:none; }
+
+html[data-theme="dark"] .logo-dark{ display:block; }
+html[data-theme="dark"] .logo-light{ display:none; }
+html[data-theme="light"] .logo-dark{ display:none; }
+html[data-theme="light"] .logo-light{ display:block; }
