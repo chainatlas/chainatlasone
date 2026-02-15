@@ -625,87 +625,60 @@ html[data-theme="dark"] .logo-light{ display:none; }
 html[data-theme="light"] .logo-dark{ display:none; }
 html[data-theme="light"] .logo-light{ display:block; }
 
-/* ===========================
-   MOBILE FEED FINAL OVERRIDE (FIXED)
+/* ==========================================
+   MOBILE FEED ROBUST OVERRIDE (NO nth-child)
    Time | Fee | Amount
-   =========================== */
+   ========================================== */
 @media (max-width: 640px){
 
-  :root{
-    --feed-cols: 78px 1fr auto;
-  }
-
-  /* ---------- HEADER ---------- */
-  .feed-header{
+  /* 3 columns */
+  .feed-header,
+  .row{
     display:grid !important;
-    grid-template-columns: var(--feed-cols) !important;
+    grid-template-columns: 78px 1fr auto !important;
     gap: 10px !important;
     align-items:center !important;
   }
 
-  /* Header hat 5 Kinder (Time, From, To, Fee, Amount) -> From/To komplett weg */
-  .feed-header > :nth-child(2),
-  .feed-header > :nth-child(3){
+  /* Header: From/To komplett aus */
+  #From, #To{ display:none !important; }
+
+  /* Header Fee/Amount sauber ausrichten */
+  #Time{ justify-self:start; }
+  #Fee{ justify-self:start; }
+  #Amount{ justify-self:end; }
+
+  /* Rows: From/To Slots komplett aus */
+  .row .from-slot,
+  .row .to-slot{
     display:none !important;
   }
 
-  /* Fee + Amount auf Zeile 1 erzwingen */
-  .feed-header > :nth-child(1){
+  /* Zellen explizit in Spalten legen */
+  .row > .timecell{
     grid-column: 1 !important;
     grid-row: 1 !important;
   }
-  .feed-header > :nth-child(4){
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    white-space: nowrap;
-  }
-  .feed-header > :nth-child(5){
-    grid-column: 3 !important;
-    grid-row: 1 !important;
-    justify-self: end !important;
-    white-space: nowrap;
-  }
 
-  /* IDs optional ausblenden (falls vorhanden) */
-  #From, #To{ display:none !important; }
-
-  /* ---------- ROWS ---------- */
-  .row{
-    display:grid !important;
-    grid-template-columns: var(--feed-cols) !important;
-    gap: 10px !important;
-    align-items:center !important;
-    height: 44px !important;
-  }
-
-  /* From-slot / To-slot raus */
-  .row > :nth-child(2),
-  .row > :nth-child(3){
-    display:none !important;
-  }
-
-  /* Fee (4) -> Spalte 2, Zeile 1 */
-  .row > :nth-child(4){
+  /* Fee ist das .muted DIV, aber NICHT die timecell */
+  .row > .muted:not(.timecell){
     display:block !important;
     grid-column: 2 !important;
     grid-row: 1 !important;
+    justify-self:start !important;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
 
-  /* Amount (5) -> Spalte 3, Zeile 1 */
-  .row > :nth-child(5){
+  /* Amount */
+  .row > .value{
     display:block !important;
     grid-column: 3 !important;
     grid-row: 1 !important;
     justify-self:end !important;
     white-space:nowrap;
-  }
-
-  /* Amount optisch stärker */
-  .value{
-    font-size: 16px !important;
-    font-weight: 950 !important;
+    font-size: 16px;
+    font-weight: 950;
   }
 }
