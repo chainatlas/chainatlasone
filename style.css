@@ -682,3 +682,28 @@ html[data-theme="light"] .logo-light{ display:block; }
     font-weight: 950;
   }
 }
+/* ===========================
+   MOBILE HEADER FIX (FINAL)
+   Header soll NUR: Time | Fee | Amount
+   =========================== */
+@media (max-width: 640px){
+
+  /* Header: erzwinge 3 Spalten */
+  .feed-header{
+    display:grid !important;
+    grid-template-columns: 78px 1fr auto !important;
+    gap: 10px !important;
+    align-items:center !important;
+  }
+
+  /* Header: blende 2. und 3. Zelle (From/To) IMMER aus */
+  .feed-header > :nth-child(2),
+  .feed-header > :nth-child(3){
+    display:none !important;
+  }
+
+  /* Optional: stelle sicher, dass Fee/Amount korrekt ausgerichtet sind */
+  .feed-header > :nth-child(1){ justify-self:start; }
+  .feed-header > :nth-child(4){ justify-self:start; }
+  .feed-header > :nth-child(5){ justify-self:end; }
+}
