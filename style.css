@@ -454,9 +454,31 @@ body{
 @media (max-width: 640px){
   :root{ --feed-cols: 70px 1fr 90px; }
   .feed-header{ display:none; }
+
+  /* Standard rows (falls irgendwo noch 5-spaltig gerendert wird) */
   .row{ grid-template-columns: var(--feed-cols); gap: 10px; }
-  .row > :nth-child(3),
-  .row > :nth-child(4){ display:none; }
+
+  /* Nur bei NICHT-mobile-rows 3+4 verstecken */
+  .row:not(.row-mobile) > :nth-child(3),
+  .row:not(.row-mobile) > :nth-child(4){
+    display:none;
+  }
+
+  /* Mobile 3-spaltig: Time | Fee | Amount */
+  .row.row-mobile{
+    grid-template-columns: 78px 1fr auto;
+    gap: 10px;
+    align-items:center;
+  }
+  .row.row-mobile > :nth-child(3){
+    display:block; /* Amount muss sichtbar sein */
+  }
+
+  .feeCell{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
 }
 
 /* Logo */
@@ -696,7 +718,7 @@ html[data-theme="light"] .logo-light{ display:block; }
 
   /* Canvas wieder "wide" statt riesig */
   #yard{
-    height: 200px;         /* 180–220 je nach Geschmack */
+    height: 170px;         /* 180–220 je nach Geschmack */
     border-radius: 14px;
   }
 }
