@@ -866,6 +866,15 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
 
   const feeText = feeRate != null ? `${feeRate.toFixed(1)} sat/vB` : "—";
 
+  if (isMobile()) {
+  li.innerHTML = `
+    <div class="row row-mobile">
+      <div class="timecell muted"><span>${fmtDateTime()}</span></div>
+      <div class="muted feeCell">${feeText}</div>
+      <div class="value right ${isBig ? "big" : ""}">${amountText}</div>
+    </div>
+  `;
+} else {
   li.innerHTML = `
     <div class="row">
       <div class="timecell muted"><span>${fmtDateTime()}</span></div>
@@ -875,6 +884,11 @@ function addItem({ txid, fee, vsize, valueSats }, fragment) {
       <div class="value right ${isBig ? "big" : ""}">${amountText}</div>
     </div>
   `;
+
+  li.querySelector(".from-slot")?.appendChild(fromEl);
+  li.querySelector(".to-slot")?.appendChild(toEl);
+}
+
 
   li.querySelector(".from-slot")?.appendChild(fromEl);
   li.querySelector(".to-slot")?.appendChild(toEl);
@@ -1041,14 +1055,11 @@ async function checkBlocks() {
 /* ---------------- Premium Block Factory Canvas ---------------- */
 function resizeCanvasToDisplaySize() {
   if (!canvas) return;
-
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  const cssW = Math.max(1, rect.width || canvas.clientWidth || 1);
 
-  // On mobile we force a square canvas (CSS uses aspect-ratio:1/1; height:auto),
-  // so compute height from width to avoid 0-height cases.
-  const cssH = isMobile() ? cssW : Math.max(1, rect.height || canvas.clientHeight || 260);
+  const cssW = Math.max(1, rect.width || canvas.clientWidth || 1);
+  const cssH = Math.max(1, rect.height || canvas.clientHeight || 1);
 
   const w = Math.max(1, Math.round(cssW * dpr));
   const h = Math.max(1, Math.round(cssH * dpr));

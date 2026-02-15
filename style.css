@@ -689,3 +689,28 @@ html[data-theme="light"] .logo-light{ display:block; }
   flex-direction:column;
   gap: 12px;
 }
+@media (max-width: 640px){
+  /* weniger Außen-/Innenraum im Block Factory Card */
+  .viz{ padding: 12px; }
+  .vizTop{ margin-bottom: 8px; }
+
+  /* Canvas wieder "wide" statt riesig */
+  #yard{
+    height: 200px;         /* 180–220 je nach Geschmack */
+    border-radius: 14px;
+  }
+}
+@media (max-width: 640px){
+  .row.row-mobile{
+    display:grid;
+    grid-template-columns: 78px 1fr auto; /* Time | Fee | Amount */
+    gap: 10px;
+    align-items:center;
+    height: 44px;
+  }
+  .feeCell{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
