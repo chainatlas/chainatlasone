@@ -41,9 +41,7 @@ html,body{ height:100%; }
 body{
   margin:0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background: radial-gradient(1200px 700px at 20% -10%, rgba(0,160,255,.10), transparent 60%),
-              radial-gradient(1200px 700px at 90% 10%, rgba(25,195,125,.10), transparent 60%),
-              var(--bg);
+  background: var(--bg);
   color: var(--text);
 }
 
@@ -62,32 +60,26 @@ body{
 
 .muted{ color: var(--muted); }
 
+/* Topbar */
 .topbar{
   display:flex;
   align-items:center;
-  justify-content:space-between; /* Logo links, Buttons rechts */
+  justify-content:space-between;
   gap:16px;
 }
-.topLeft{                       /* linker Spacer */
-  justify-self:start;
-}
+
 .brand{
   display:flex;
   align-items:center;
+  justify-content:flex-start;
 }
+
 .topActions{
   display:flex;
   align-items:center;
   gap:10px;
 }
-.brandTitle{
-  font-weight: 900;
-  letter-spacing: .6px;
-  font-size: 20px;
-}
-.dot{ opacity:.75; }
 
-.topActions{ display:flex; align-items:center; gap:10px; }
 .statusPill{
   padding: 8px 12px;
   border-radius: 999px;
@@ -115,6 +107,7 @@ body{
 }
 .iconMoon{ font-size: 16px; opacity:.9; }
 
+/* Controls */
 .controls{
   display:grid;
   grid-template-columns: 160px 1fr 340px;
@@ -156,6 +149,7 @@ body{
 .mined .big{ font-weight: 900; font-size: 14px; }
 .mined .sub{ font-size: 12px; color: var(--muted); }
 
+/* KPI grid */
 .kpis{
   display:grid;
   grid-template-columns: 1fr 1.2fr 1fr;
@@ -280,6 +274,8 @@ body{
   display:block;
   border-radius: 16px;
   border: 1px solid var(--stroke);
+
+  /* ✅ remove the “blue cast” by keeping canvas neutral */
   background: rgba(0,0,0,.04);
 }
 
@@ -295,6 +291,25 @@ body{
 }
 .learnBox ul{ margin:8px 0 0 18px; color: var(--muted); }
 
+/* Inline learning cards */
+.learnInline{
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+  font-size: 13px;
+  color: var(--text);
+}
+.learnInline ul{ margin:8px 0 0 18px; color: var(--muted); }
+.learnInline .t{ font-weight: 950; margin-bottom: 6px; }
+
+/* ✅ spacing fix specifically for the feed learn box (gap like others) */
+.feedSection #learnFeed{
+  margin-bottom: 12px;
+}
+
+/* Tooltip */
 .tooltip{
   position:fixed;
   z-index:9999;
@@ -330,6 +345,8 @@ body{
   color: var(--muted);
   font-weight: 950;
   letter-spacing: .02em;
+
+  /* keep header separation consistent */
   margin-bottom: 10px;
 }
 .feedWrap{
@@ -425,38 +442,33 @@ body{
 
 #Time, #From, #To, #Fee, #Amount{ cursor: help; }
 
+/* Responsive */
 @media (max-width: 980px){
   .controls{ grid-template-columns: 160px 1fr; }
   .mined{ grid-column: 1 / -1; text-align:left; }
   .kpis{ grid-template-columns: 1fr; }
   :root{ --feed-cols: 90px 1fr 1fr 90px 160px; }
 }
-.brand{
-  display:flex;
-  align-items:center;
-}
-.brand {
-justify-self: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+/* Mobile feed */
+@media (max-width: 640px){
+  :root{ --feed-cols: 70px 1fr 90px; }
+  .feed-header{ display:none; }
+  .row{ grid-template-columns: var(--feed-cols); gap: 10px; }
+  .row > :nth-child(3),
+  .row > :nth-child(4){ display:none; }
 }
 
-/* Logo Grundgröße */
-.logo {
-  height: 52px;              /* größer: z.B. 72px wenn du willst */
+/* Logo */
+.logo{
+  height: 52px;
   width: auto;
   display: block;
 }
-
-/* Default: dark */
 .logo-dark{ display:block; }
 .logo-light{ display:none; }
 
-/* Explicit theme switching */
 html[data-theme="dark"] .logo-dark{ display:block; }
 html[data-theme="dark"] .logo-light{ display:none; }
-
 html[data-theme="light"] .logo-dark{ display:none; }
 html[data-theme="light"] .logo-light{ display:block; }
-
