@@ -122,6 +122,51 @@ function blockSubsidyBtcAtHeight(height) {
   const sats = (50n * 100000000n) >> BigInt(era);
   return Number(sats) / 1e8;
 }
+function applyFocusFromURL() {
+  try {
+    const url = new URL(window.location.href);
+    const focus = (url.searchParams.get("focus") || "").toLowerCase();
+    const learn = url.searchParams.get("learn");
+
+    // Optional: auto-enable learning mode if learn=1
+    if (learn === "1" && learnModeEl && !learnModeEl.checked) {
+      learnModeEl.checked = true;
+      learningMode = true;
+      renderLearnContent();
+    }
+
+    if (!focus) return;
+
+    const map = {
+      supply: "#kpiSupply",
+      price: "#kpiPrice",
+      halving: "#kpiHalving",
+      factory: ".viz",
+      feed: ".feedSection",
+      details: "#details",
+    };
+
+    const sel = map[focus];
+    if (!sel) return;
+
+    const target = document.querySelector(sel);
+    if (!target) return;
+
+    // Scroll into view (safe)
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Temporary highlight ring (visual only)
+    target.classList.add("caoFocusPulse");
+    window.setTimeout(() => target.classList.remove("caoFocusPulse"), 1600);
+
+    // Clean URL (optional) — prevents repeated focus on refresh
+    url.searchParams.delete("focus");
+    url.searchParams.delete("learn");
+    window.history.replaceState({}, "", url.toString());
+  } catch {
+    // no-op
+  }
+}
 
 /* ---------------- Theme ---------------- */
 function applyTheme(theme) {
@@ -1572,7 +1617,9 @@ async function checkBlocksBoot() {
 
 /* ---------------- App boot ---------------- */
 async function start() {
-  setRangeActive(currentRange);
+  
+ applyFocusFromURL();
+setRangeActive(currentRange);
 
   tick();
   setInterval(tick, POLL_MS);

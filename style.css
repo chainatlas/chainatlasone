@@ -707,3 +707,12 @@ html[data-theme="light"] .logo-light{ display:block; }
   .feed-header > :nth-child(4){ justify-self:start; }
   .feed-header > :nth-child(5){ justify-self:end; }
 }
+/* Dashboard focus pulse (visual only) */
+.caoFocusPulse{
+  position: relative;
+  outline: 2px solid rgba(25,195,125,.45);
+  outline-offset: 6px;
+  border-radius: calc(var(--cardR) + 6px);
+  box-shadow: 0 0 0 2px rgba(25,195,125,.10) inset, 0 0 28px rgba(25,195,125,.12);
+  transition: outline-color .2s ease;
+}

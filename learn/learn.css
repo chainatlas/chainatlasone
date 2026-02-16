@@ -1,0 +1,185 @@
+/* Learn-only additions. Uses your existing .card/.btn/.topbar styles. */
+
+/* Make anchor buttons look like buttons */
+a.btn{
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Layout */
+.learnContent{
+  display: grid;
+  gap: 14px;
+}
+
+/* Hero */
+.learnHero{
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.learnTitle{
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 950;
+  letter-spacing: .2px;
+}
+
+.learnSubtitle{
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.learnMetaRow{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.learnHeroPanel{
+  border-radius: var(--cardR);
+  padding: 14px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.02);
+}
+
+.learnPanelTitle{
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 950;
+  margin-bottom: 10px;
+}
+
+.learnPanelList{
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* Grid of lessons */
+.learnGrid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.lessonCard{
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.lessonTop{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lessonTag{
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 950;
+  margin-bottom: 6px;
+}
+
+.lessonTitleSmall{
+  margin: 0;
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.lessonDesc{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.lessonActions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pillSmall{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.02);
+  color: var(--muted);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.check{
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke2);
+  display: grid;
+  place-items: center;
+  color: var(--green);
+}
+
+/* Lesson page */
+.lessonCardWide{
+  padding: 14px;
+}
+
+.lessonTopRow{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lessonProgressPill{
+  white-space: nowrap;
+}
+
+.lessonInner{
+  margin-top: 12px;
+  padding: 14px;
+  background: rgba(255,255,255,.02);
+}
+
+.learnFooterCard{
+  padding: 14px;
+}
+
+.learnFooterTitle{
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 950;
+  margin-bottom: 8px;
+}
+
+.learnFooterText{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Mobile */
+@media (max-width: 860px){
+  .learnHero{ grid-template-columns: 1fr; }
+  .learnGrid{ grid-template-columns: 1fr; }
+  .lessonTopRow{ flex-direction: column; }
+}

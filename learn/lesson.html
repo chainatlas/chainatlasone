@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ChainAtlasOne — Lesson</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/learn/learn.css" />
+<link rel="canonical" href="https://www.chainatlasone.com/learn/lesson.html" />
+<meta name="robots" content="index,follow" />
+
+  </head>
+
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand" aria-label="ChainAtlasOne">
+          <img src="/logo-dark.png" alt="ChainAtlasOne" class="logo logo-dark" />
+          <img src="/logo-light.png" alt="ChainAtlasOne" class="logo logo-light" />
+        </div>
+
+        <div class="topActions">
+          <a class="btn btnGhost" href="/learn/" aria-label="Back to learn">Learn</a>
+          <a class="btn btnGhost" href="/" aria-label="Back to dashboard">Dashboard</a>
+         <button
+  id="themeBtn"
+  class="btn btnIcon"
+  type="button"
+  title="Toggle theme"
+  aria-label="Toggle theme"
+>
+  <span class="iconMoon" aria-hidden="true">☾</span>
+</button>
+ <span id="learnStatus" class="statusPill">Lesson</span>
+        </div>
+      </header>
+
+      <main class="content learnContent" aria-label="Lesson">
+        <section class="card lessonCardWide" id="lessonCard">
+          <div class="lessonTopRow">
+            <div>
+              <div class="lessonTag" id="lessonLevel">—</div>
+              <h1 class="learnTitle" id="lessonTitle">—</h1>
+              <p class="learnSubtitle" id="lessonIntro">—</p>
+<canvas id="lessonCanvas" class="lessonHeroCanvas" aria-hidden="true"></canvas>
+
+            </div>
+
+            <div class="lessonProgressPill pill" id="lessonPill">Not completed</div>
+          </div>
+
+          <div class="card lessonInner">
+            <div class="learnFooterTitle">Key ideas</div>
+            <ul id="lessonBullets" class="learnPanelList"></ul>
+          </div>
+
+          <div class="card lessonInner">
+            <div class="learnFooterTitle">Practical example</div>
+            <p id="lessonExample" class="learnFooterText"></p>
+          </div>
+
+          <div class="lessonActions">
+            <button id="toggleDoneBtn" class="btn btnGhost" type="button">Mark as done</button>
+            <a id="dashLink" class="btn" href="/">Go to Dashboard</a>
+          </div>
+        </section>
+      </main>
+
+      <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
+    </div>
+
+    <script type="module" src="/learn/lesson.js"></script>
+  </body>
+</html>

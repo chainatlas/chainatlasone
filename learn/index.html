@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ChainAtlasOne — Learn</title>
+
+    <meta
+      name="description"
+      content="ChainAtlasOne Learn: beginner-friendly Bitcoin lessons connected to real-world context."
+    />
+<link rel="canonical" href="https://www.chainatlasone.com/learn/" />
+<meta property="og:title" content="ChainAtlasOne — Bitcoin Learning Path" />
+<meta property="og:description" content="Beginner-friendly Bitcoin lessons. No hype. Just fundamentals." />
+<meta property="og:url" content="https://www.chainatlasone.com/learn/" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
+<meta name="robots" content="index,follow" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/learn/learn.css" />
+ <script>
+  (function () {
+    const saved = localStorage.getItem("theme");
+    const theme = saved || "dark";         // ✅ dark default
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+
+ </head>
+
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand" aria-label="ChainAtlasOne">
+          <img src="/logo-dark.png" alt="ChainAtlasOne" class="logo logo-dark" />
+          <img src="/logo-light.png" alt="ChainAtlasOne" class="logo logo-light" />
+        </div>
+
+        <div class="topActions">
+          <a class="btn btnGhost" href="/" aria-label="Back to dashboard">Dashboard</a>
+          <button id="resetProgressBtn" class="btn btnGhost" type="button">Reset progress</button>
+          <button
+  id="themeBtn"
+  class="btn btnIcon"
+  type="button"
+  title="Toggle theme"
+  aria-label="Toggle theme"
+>
+  <span class="iconMoon" aria-hidden="true">☾</span>
+</button>
+<span id="learnStatus" class="statusPill">Ready</span>
+        </div>
+      </header>
+
+      <main class="content learnContent" aria-label="Learning Path">
+        <section class="card learnHero">
+          <div class="learnHeroText">
+            <h1 class="learnTitle">Bitcoin Learning Path</h1>
+            <p class="learnSubtitle">
+              Clear lessons for beginners and early intermediates. No hype. No selling.
+              Just fundamentals—structured and practical.
+            </p>
+
+            <div class="learnMetaRow">
+              <div class="kpiInline">
+                <div class="kpiInlineLabel">Your progress</div>
+                <div class="kpiInlineValue"><span id="progressPct">0</span>%</div>
+              </div>
+
+              <div class="kpiInline">
+                <div class="kpiInlineLabel">Completed</div>
+                <div class="kpiInlineValue">
+                  <span id="completedCount">0</span>/<span id="totalCount">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="learnHeroPanel">
+            <div class="learnPanelTitle">How to use this</div>
+            <ul class="learnPanelList">
+              <li>Open a lesson, read the key ideas, then mark it as completed.</li>
+              <li>Use “Go to Dashboard” to see concepts in real time.</li>
+              <li>Keep it simple: learn → observe → repeat.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="learnGrid" id="lessonGrid" aria-label="Lessons"></section>
+
+        <section class="card learnFooterCard">
+          <div class="learnFooterTitle">Coming next</div>
+          <p class="learnFooterText">
+            We can add interactive mini-simulations (fee market, confirmations, halving timeline)
+            without touching the stable dashboard modules.
+          </p>
+        </section>
+      </main>
+
+      <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
+    </div>
+
+    <script type="module" src="/learn/learn.js"></script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Course",
+  "name":"ChainAtlasOne Bitcoin Learning Path",
+  "description":"Beginner-friendly Bitcoin lessons connected to real-world context. No hype. Just fundamentals.",
+  "provider":{
+    "@type":"Organization",
+    "name":"ChainAtlasOne",
+    "url":"https://www.chainatlasone.com"
+  }
+}
+</script>
+
+  </body>
+</html>
