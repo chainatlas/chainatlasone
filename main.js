@@ -1,4 +1,5 @@
-import "./style.css";
+import "/style.css";
+
 
 /* ---------------- Config ---------------- */
 const API_BASE = "https://mempool.space/api";
