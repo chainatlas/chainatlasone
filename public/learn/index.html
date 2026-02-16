@@ -8,7 +8,7 @@
   html { background: #070a12; }
   html[data-theme="light"] { background: #ffffff; }
   body { margin: 0; }
-  #app { opacity: 0; }
+  
 </style>
 
 
@@ -42,9 +42,24 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
+<style>
+  /* Hide only Learn page until learn.css is loaded */
+  html:not(.learn-css) body { visibility: hidden; }
+  html:not(.learn-css) body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    background: #070a12;
+    visibility: visible;
+  }
+  html[data-theme="light"]:not(.learn-css) body::before{
+    background: #ffffff;
+  }
+</style>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="./learn.css" />
+    <link rel="stylesheet" href="./learn.css" onload="document.documentElement.classList.add('learn-css')">
+
 <script type="module" src="./learn.js"></script>
 
     <!-- ✅ CSS fallback injector (fixes “CSS delivered but not applied” edge cases) -->
@@ -90,7 +105,7 @@
     </script>
 <style>
   /* Show UI once CSS is ready */
-  body.css-ready #app { opacity: 1; }
+  
 </style>
 
   </head>

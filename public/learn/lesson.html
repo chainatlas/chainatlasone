@@ -8,7 +8,7 @@
   html { background: #070a12; }
   html[data-theme="light"] { background: #ffffff; }
   body { margin: 0; }
-  #app { opacity: 0; }
+  
 </style>
 
 <title>ChainAtlasOne — Lesson</title>
@@ -33,13 +33,27 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
+<style>
+  /* Hide only Learn page until learn.css is loaded */
+  html:not(.learn-css) body { visibility: hidden; }
+  html:not(.learn-css) body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    background: #070a12;
+    visibility: visible;
+  }
+  html[data-theme="light"]:not(.learn-css) body::before{
+    background: #ffffff;
+  }
+</style>
 
     <!-- Learn-only styling -->
-    <link rel="stylesheet" href="./learn.css" />
+    <link rel="stylesheet" href="./learn.css" onload="document.documentElement.classList.add('learn-css')">
+
 <style>
   /* Show UI once CSS is ready */
-  body.css-ready #app { opacity: 1; }
-</style>
+  </style>
 
   </head>
 
