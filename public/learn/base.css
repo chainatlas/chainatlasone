@@ -1,172 +1,114 @@
+/* Learn base (independent from Vite /assets bundle) */
 :root{
-  --max: 1080px;
-
-  --bg: #ffffff;
-  --panel: #ffffff;
-  --panel2: #fbfbfd;
-  --text: #0b0e14;
-  --muted: rgba(15, 18, 28, .62);
-  --stroke: rgba(15, 18, 28, .10);
-  --stroke2: rgba(15, 18, 28, .14);
-
-  --shadow: 0 16px 50px rgba(0,0,0,.08);
-  --shadow2: 0 10px 30px rgba(0,0,0,.06);
-
-  --green: #19c37d;
-  --green2:#0aa36b;
-  --amber: #f2c14e;
-  --red: #ff5d5d;
-  --blue: #7aaaff;
-
-  --cardR: 18px;
-  --blur: blur(16px);
+  --bg:#070a12;
+  --text:rgba(235,240,248,.92);
+  --muted:rgba(235,240,248,.68);
+  --card:rgba(255,255,255,.06);
+  --card2:rgba(255,255,255,.08);
+  --stroke:rgba(255,255,255,.10);
+  --stroke2:rgba(255,255,255,.14);
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+  --r:18px;
+  --r2:22px;
+  --btnBg:rgba(255,255,255,.06);
+  --btnBg2:rgba(255,255,255,.10);
+  --btnText:rgba(235,240,248,.92);
+  --accent1:#7aaaff;
+  --accent2:#f2c14e;
+  --accent3:#19c37d;
 }
 
-:root[data-theme="dark"]{
-  --bg: #070a12;
-  --panel: rgba(255,255,255,.04);
-  --panel2: rgba(255,255,255,.03);
-  --text: rgba(235,240,248,1);
-  --muted: rgba(235,240,248,.65);
-  --stroke: rgba(255,255,255,.10);
-  --stroke2: rgba(255,255,255,.14);
-  --shadow: 0 24px 70px rgba(0,0,0,.55);
-  --shadow2: 0 14px 40px rgba(0,0,0,.35);
+html[data-theme="light"]{
+  --bg:#ffffff;
+  --text:rgba(20,20,24,.88);
+  --muted:rgba(20,20,24,.60);
+  --card:rgba(0,0,0,.04);
+  --card2:rgba(0,0,0,.06);
+  --stroke:rgba(0,0,0,.10);
+  --stroke2:rgba(0,0,0,.14);
+  --shadow:0 18px 50px rgba(0,0,0,.10);
+  --btnBg:rgba(0,0,0,.04);
+  --btnBg2:rgba(0,0,0,.07);
+  --btnText:rgba(20,20,24,.88);
 }
 
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
+html,body{height:100%}
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background: var(--bg);
-  color: var(--text);
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 }
 
-#app{
-  max-width: var(--max);
-  margin: 22px auto;
-  padding: 0 18px 24px;
-}
+/* layout helpers used by learn pages */
+#app{min-height:100%}
 
 .card{
-  background: linear-gradient(180deg, var(--panel), var(--panel2));
-  border: 1px solid var(--stroke);
-  border-radius: var(--cardR);
-  box-shadow: var(--shadow2);
+  background:linear-gradient(180deg,var(--card2),var(--card));
+  border:1px solid var(--stroke);
+  border-radius:var(--r2);
+  box-shadow:var(--shadow);
 }
 
-.muted{ color: var(--muted); }
-
-.topbar{
-  display:flex;
+.muted{color:var(--muted)}
+.pill,.statusPill{
+  display:inline-flex;
   align-items:center;
-  justify-content:space-between;
-  gap:16px;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background:rgba(0,0,0,.15);
+  color:var(--text);
+  font-size:12px;
+  font-weight:700;
 }
-
-.brand{
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-}
-
-.logo{
-  height: 52px;
-  width: auto;
-  display: block;
-}
-.logo-dark{ display:block; }
-.logo-light{ display:none; }
-
-html[data-theme="dark"] .logo-dark{ display:block; }
-html[data-theme="dark"] .logo-light{ display:none; }
-html[data-theme="light"] .logo-dark{ display:none; }
-html[data-theme="light"] .logo-light{ display:block; }
-
-.topActions{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap: wrap;
-}
-
-.statusPill{
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--stroke);
-  background: rgba(255,255,255,.02);
-  font-size: 12px;
-  color: var(--muted);
-}
+html[data-theme="light"] .pill,
+html[data-theme="light"] .statusPill{background:rgba(255,255,255,.6)}
 
 .btn{
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--stroke);
-  background: rgba(255,255,255,.04);
-  color: var(--text);
-  cursor: pointer;
-  text-decoration: none;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:8px;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg,var(--btnBg2),var(--btnBg));
+  color:var(--btnText);
+  text-decoration:none;
+  font-weight:800;
+  cursor:pointer;
 }
-.btn:hover{ border-color: var(--stroke2); }
-.btnGhost{ background: transparent; }
-.btnIcon{
-  width: 42px;
-  height: 42px;
-  display:grid;
-  place-items:center;
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btnGhost{
+  background:transparent;
+  border:1px solid var(--stroke);
 }
-.iconMoon{ font-size: 16px; opacity:.9; }
+.btnIcon{width:44px;padding:10px}
 
-.pill{
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--stroke);
-  background: rgba(255,255,255,.02);
-  font-weight: 900;
+/* topbar used by learn pages */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:16px 18px;
+  backdrop-filter:blur(10px);
+  background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0));
+}
+html[data-theme="light"] .topbar{
+  background:linear-gradient(180deg,rgba(255,255,255,.80),rgba(255,255,255,0));
 }
 
-.tooltip{
-  position:fixed;
-  z-index:9999;
-  max-width: 340px;
-  padding: 10px 12px;
-  border: 1px solid var(--stroke);
-  border-radius: 14px;
-  background: rgba(0,0,0,.35);
-  color: var(--text);
-  backdrop-filter: var(--blur);
-  box-shadow: var(--shadow);
-  font-size: 13px;
-  pointer-events:none;
-}
-:root[data-theme="light"] .tooltip{ background: rgba(255,255,255,.85); color:#111; }
+.brand{display:flex;align-items:center;gap:10px}
+.logo{height:26px}
+.logo-light{display:none}
+html[data-theme="light"] .logo-dark{display:none}
+html[data-theme="light"] .logo-light{display:block}
 
-.hidden{ display:none; }
-
-@media (max-width: 640px){
-  #app{
-    margin: 14px auto;
-    padding: 0 12px 18px;
-  }
-  .topbar{
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .brand{
-    flex: 1 1 100%;
-    min-width: 0;
-  }
-  .logo{ height: 46px; }
-  .topActions{
-    flex: 1 1 100%;
-    gap: 8px;
-    justify-content: flex-start;
-  }
-  .statusPill{ flex: 1 1 100%; }
-}
+.content{padding:18px}
