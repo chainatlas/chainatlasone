@@ -2,6 +2,9 @@ import { LESSONS } from "./learn-data.js";
 import { LESSON_CONTENT } from "./lesson-content.js";
 import { initThemeToggle } from "./theme.js";
 import { startIllustrationLoop } from "./illustrations.js";
+requestAnimationFrame(() => {
+  document.body.classList.add("css-ready");
+});
 
 const LS_KEY = "cao_learn_progress_v1";
 

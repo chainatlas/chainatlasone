@@ -1,4 +1,8 @@
 import { LESSONS } from "./learn-data.js";
+// Mark CSS as ready on next frame to avoid FOUC
+requestAnimationFrame(() => {
+  document.body.classList.add("css-ready");
+});
 
 const LS_KEY = "cao_learn_progress_v1";
 

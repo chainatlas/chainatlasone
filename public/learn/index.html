@@ -3,7 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>ChainAtlasOne — Learn</title>
+   <style>
+  /* Prevent flash of unstyled content (FOUC) */
+  html { background: #070a12; }
+  html[data-theme="light"] { background: #ffffff; }
+  body { margin: 0; }
+  #app { opacity: 0; }
+</style>
+
+
+ <title>ChainAtlasOne — Learn</title>
 
     <!-- Theme (early, dark default) -->
     <script>
@@ -79,6 +88,11 @@
         });
       })();
     </script>
+<style>
+  /* Show UI once CSS is ready */
+  body.css-ready #app { opacity: 1; }
+</style>
+
   </head>
 
   <body>
