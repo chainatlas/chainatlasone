@@ -5,33 +5,41 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>ChainAtlasOne — Learn</title>
 
+    <!-- Theme (early, dark default) -->
+    <script>
+      (function () {
+        const saved = localStorage.getItem("theme");
+        const theme = saved || "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+
     <meta
       name="description"
       content="ChainAtlasOne Learn: beginner-friendly Bitcoin lessons connected to real-world context."
     />
-<link rel="canonical" href="https://www.chainatlasone.com/learn/" />
-<meta property="og:title" content="ChainAtlasOne — Bitcoin Learning Path" />
-<meta property="og:description" content="Beginner-friendly Bitcoin lessons. No hype. Just fundamentals." />
-<meta property="og:url" content="https://www.chainatlasone.com/learn/" />
-<meta property="og:type" content="website" />
-<meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
-<meta name="robots" content="index,follow" />
+    <meta name="robots" content="index,follow" />
 
+    <!-- Canonical / Open Graph -->
+    <link rel="canonical" href="https://www.chainatlasone.com/learn/" />
+    <meta property="og:title" content="ChainAtlasOne — Bitcoin Learning Path" />
+    <meta
+      property="og:description"
+      content="Beginner-friendly Bitcoin lessons. No hype. Just fundamentals."
+    />
+    <meta property="og:url" content="https://www.chainatlasone.com/learn/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
+    <!-- Styles -->
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/learn/learn.css" />
- <script>
-  (function () {
-    const saved = localStorage.getItem("theme");
-    const theme = saved || "dark";         // ✅ dark default
-    document.documentElement.setAttribute("data-theme", theme);
-  })();
-</script>
-
- </head>
+  </head>
 
   <body>
     <div id="app">
@@ -42,18 +50,21 @@
         </div>
 
         <div class="topActions">
-          <a class="btn btnGhost" href="/" aria-label="Back to dashboard">Dashboard</a>
+          <!-- use explicit file to avoid any rewrite/index ambiguity -->
+          <a class="btn btnGhost" href="/index.html" aria-label="Back to dashboard">Dashboard</a>
           <button id="resetProgressBtn" class="btn btnGhost" type="button">Reset progress</button>
+
           <button
-  id="themeBtn"
-  class="btn btnIcon"
-  type="button"
-  title="Toggle theme"
-  aria-label="Toggle theme"
->
-  <span class="iconMoon" aria-hidden="true">☾</span>
-</button>
-<span id="learnStatus" class="statusPill">Ready</span>
+            id="themeBtn"
+            class="btn btnIcon"
+            type="button"
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            <span class="iconMoon" aria-hidden="true">☾</span>
+          </button>
+
+          <span id="learnStatus" class="statusPill">Ready</span>
         </div>
       </header>
 
@@ -105,20 +116,22 @@
       <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
     </div>
 
+    <!-- Learn app -->
     <script type="module" src="/learn/learn.js"></script>
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"Course",
-  "name":"ChainAtlasOne Bitcoin Learning Path",
-  "description":"Beginner-friendly Bitcoin lessons connected to real-world context. No hype. Just fundamentals.",
-  "provider":{
-    "@type":"Organization",
-    "name":"ChainAtlasOne",
-    "url":"https://www.chainatlasone.com"
-  }
-}
-</script>
 
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"Course",
+      "name":"ChainAtlasOne Bitcoin Learning Path",
+      "description":"Beginner-friendly Bitcoin lessons connected to real-world context. No hype. Just fundamentals.",
+      "provider":{
+        "@type":"Organization",
+        "name":"ChainAtlasOne",
+        "url":"https://www.chainatlasone.com"
+      }
+    }
+    </script>
   </body>
 </html>

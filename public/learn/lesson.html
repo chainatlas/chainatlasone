@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>ChainAtlasOne — Lesson</title>
 
+    <!-- Theme (early, dark default) -->
+    <script>
+      (function () {
+        const saved = localStorage.getItem("theme");
+        const theme = saved || "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+
+    <link rel="canonical" href="https://www.chainatlasone.com/learn/lesson.html" />
+    <meta name="robots" content="index,follow" />
+
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/learn/learn.css" />
-<link rel="canonical" href="https://www.chainatlasone.com/learn/lesson.html" />
-<meta name="robots" content="index,follow" />
-
   </head>
 
   <body>
@@ -25,18 +34,21 @@
         </div>
 
         <div class="topActions">
-          <a class="btn btnGhost" href="/learn/" aria-label="Back to learn">Learn</a>
-          <a class="btn btnGhost" href="/" aria-label="Back to dashboard">Dashboard</a>
-         <button
-  id="themeBtn"
-  class="btn btnIcon"
-  type="button"
-  title="Toggle theme"
-  aria-label="Toggle theme"
->
-  <span class="iconMoon" aria-hidden="true">☾</span>
-</button>
- <span id="learnStatus" class="statusPill">Lesson</span>
+          <!-- Explicit file paths to avoid /learn/ directory-index + SPA fallback issues -->
+          <a class="btn btnGhost" href="/learn/index.html" aria-label="Back to learn">Learn</a>
+          <a class="btn btnGhost" href="/index.html" aria-label="Back to dashboard">Dashboard</a>
+
+          <button
+            id="themeBtn"
+            class="btn btnIcon"
+            type="button"
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            <span class="iconMoon" aria-hidden="true">☾</span>
+          </button>
+
+          <span id="learnStatus" class="statusPill">Lesson</span>
         </div>
       </header>
 
@@ -47,8 +59,8 @@
               <div class="lessonTag" id="lessonLevel">—</div>
               <h1 class="learnTitle" id="lessonTitle">—</h1>
               <p class="learnSubtitle" id="lessonIntro">—</p>
-<canvas id="lessonCanvas" class="lessonHeroCanvas" aria-hidden="true"></canvas>
 
+              <canvas id="lessonCanvas" class="lessonHeroCanvas" aria-hidden="true"></canvas>
             </div>
 
             <div class="lessonProgressPill pill" id="lessonPill">Not completed</div>
@@ -66,7 +78,8 @@
 
           <div class="lessonActions">
             <button id="toggleDoneBtn" class="btn btnGhost" type="button">Mark as done</button>
-            <a id="dashLink" class="btn" href="/">Go to Dashboard</a>
+            <!-- Default: explicit dashboard file. lesson.js may overwrite based on lesson content -->
+            <a id="dashLink" class="btn" href="/index.html">Go to Dashboard</a>
           </div>
         </section>
       </main>

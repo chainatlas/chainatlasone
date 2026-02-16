@@ -681,6 +681,15 @@ html[data-theme="light"] .logo-light{ display:block; }
     font-size: 16px;
     font-weight: 950;
   }
+.learnHeroCTA{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .btnLearnPrimary{
+    width:100%;
+    text-align:center;
+  }
 }
 /* ===========================
    MOBILE HEADER FIX (FINAL)
@@ -715,4 +724,143 @@ html[data-theme="light"] .logo-light{ display:block; }
   border-radius: calc(var(--cardR) + 6px);
   box-shadow: 0 0 0 2px rgba(25,195,125,.10) inset, 0 0 28px rgba(25,195,125,.12);
   transition: outline-color .2s ease;
+}
+/* ===========================
+   Learn CTA Button (Topbar)
+   =========================== */
+.btnLearn{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(25,195,125,.35);
+
+  color: var(--text);
+  font-weight: 950;
+  letter-spacing: .02em;
+
+  background:
+    linear-gradient(180deg, rgba(25,195,125,.18), rgba(25,195,125,.06)),
+    radial-gradient(120% 140% at 30% 20%, rgba(122,170,255,.22), rgba(0,0,0,0) 55%);
+
+  box-shadow:
+    0 0 0 2px rgba(25,195,125,.10) inset,
+    0 14px 36px rgba(0,0,0,.18);
+
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.btnLearnSub{
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--muted);
+  opacity: .95;
+}
+
+/* subtle animated sheen */
+.btnLearn::before{
+  content:"";
+  position:absolute;
+  top:-40%;
+  left:-30%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.20), rgba(255,255,255,0));
+  transform: rotate(18deg);
+  opacity: .25;
+  pointer-events:none;
+  animation: learnSheen 2.8s ease-in-out infinite;
+}
+
+@keyframes learnSheen{
+  0%   { transform: translateX(-40%) rotate(18deg); opacity: .0; }
+  25%  { opacity: .18; }
+  55%  { opacity: .24; }
+  100% { transform: translateX(220%) rotate(18deg); opacity: .0; }
+}
+
+.btnLearn:hover{
+  border-color: rgba(25,195,125,.55);
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 2px rgba(25,195,125,.14) inset,
+    0 18px 46px rgba(0,0,0,.22);
+}
+
+.btnLearn:active{
+  transform: translateY(0px);
+}
+
+/* Light theme tuning */
+:root[data-theme="light"] .btnLearn{
+  box-shadow:
+    0 0 0 2px rgba(25,195,125,.10) inset,
+    0 14px 30px rgba(0,0,0,.10);
+}
+@media (max-width: 640px){
+  .btnLearn{
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/* ===========================
+   Dashboard Learn HERO CTA
+   =========================== */
+
+.learnHeroCTA{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+
+  padding:18px 20px;
+  margin-bottom:14px;
+
+  border-radius: var(--cardR);
+  border:1px solid rgba(25,195,125,.25);
+
+  background:
+    linear-gradient(180deg, rgba(25,195,125,.10), rgba(25,195,125,.03)),
+    radial-gradient(120% 140% at 20% 0%, rgba(122,170,255,.15), rgba(0,0,0,0) 60%);
+}
+
+.learnHeroTitle{
+  font-weight:950;
+  font-size:18px;
+  letter-spacing:.02em;
+}
+
+.learnHeroSub{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.btnLearnPrimary{
+  padding:12px 18px;
+  border-radius:999px;
+  border:1px solid rgba(25,195,125,.45);
+
+  font-weight:950;
+  letter-spacing:.02em;
+
+  background: linear-gradient(
+    90deg,
+    rgba(122,170,255,.9),
+    rgba(242,193,78,.9),
+    rgba(25,195,125,.9)
+  );
+
+  color:#000;
+  box-shadow: 0 14px 40px rgba(25,195,125,.25);
+  transition: all .2s ease;
+}
+
+.btnLearnPrimary:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 20px 50px rgba(25,195,125,.35);
 }
