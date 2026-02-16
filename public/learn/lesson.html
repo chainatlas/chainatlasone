@@ -1,19 +1,11 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <style>
-  /* Prevent flash of unstyled content (FOUC) */
-  html { background: #070a12; }
-  html[data-theme="light"] { background: #ffffff; }
-  body { margin: 0; }
-  
-</style>
+    <title>ChainAtlasOne — Lesson</title>
 
-<title>ChainAtlasOne — Lesson</title>
-
-    <!-- Dark mode default (before render) -->
+    <!-- Theme (early, dark default) -->
     <script>
       (function () {
         const saved = localStorage.getItem("theme");
@@ -22,10 +14,6 @@
       })();
     </script>
 
-    <meta
-      name="description"
-      content="ChainAtlasOne lesson: structured Bitcoin fundamentals connected to real-world context."
-    />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="https://www.chainatlasone.com/learn/lesson.html" />
 
@@ -33,28 +21,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-<style>
-  /* Hide only Learn page until learn.css is loaded */
-  html:not(.learn-css) body { visibility: hidden; }
-  html:not(.learn-css) body::before{
-    content:"";
-    position: fixed;
-    inset: 0;
-    background: #070a12;
-    visibility: visible;
-  }
-  html[data-theme="light"]:not(.learn-css) body::before{
-    background: #ffffff;
-  }
-</style>
 
-    <!-- Learn-only styling -->
-    <link rel="stylesheet" href="./learn.css" onload="document.documentElement.classList.add('learn-css')">
-
-<style>
-  /* Show UI once CSS is ready */
-  </style>
-
+    <!-- ✅ IMPORTANT: use RELATIVE paths inside /learn -->
+    <link rel="stylesheet" href="./learn.css" />
   </head>
 
   <body>
@@ -66,8 +35,8 @@
         </div>
 
         <div class="topActions">
-          <a class="btn btnGhost" href="./index.html">Learn</a>
-          <a class="btn btnGhost" href="/">Dashboard</a>
+          <a class="btn btnGhost" href="/learn/" aria-label="Back to learn">Learn</a>
+          <a class="btn btnGhost" href="/" aria-label="Back to dashboard">Dashboard</a>
 
           <button
             id="themeBtn"
@@ -91,20 +60,10 @@
               <h1 class="learnTitle" id="lessonTitle">—</h1>
               <p class="learnSubtitle" id="lessonIntro">—</p>
 
-              <!-- Canvas Hero Illustration -->
-              <canvas
-                id="lessonCanvas"
-                class="lessonHeroCanvas"
-                aria-hidden="true"
-              ></canvas>
+              <canvas id="lessonCanvas" class="lessonHeroCanvas" aria-hidden="true"></canvas>
             </div>
 
-            <div
-              class="lessonProgressPill pill"
-              id="lessonPill"
-            >
-              Not completed
-            </div>
+            <div class="lessonProgressPill pill" id="lessonPill">Not completed</div>
           </div>
 
           <div class="card lessonInner">
@@ -118,17 +77,8 @@
           </div>
 
           <div class="lessonActions">
-            <button
-              id="toggleDoneBtn"
-              class="btn btnGhost"
-              type="button"
-            >
-              Mark as done
-            </button>
-
-            <a id="dashLink" class="btn" href="/">
-              Go to Dashboard
-            </a>
+            <button id="toggleDoneBtn" class="btn btnGhost" type="button">Mark as done</button>
+            <a id="dashLink" class="btn" href="/">Go to Dashboard</a>
           </div>
         </section>
       </main>
@@ -136,7 +86,7 @@
       <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
     </div>
 
-    <!-- Lesson logic (relative path!) -->
+    <!-- ✅ IMPORTANT: relative module path -->
     <script type="module" src="./lesson.js"></script>
   </body>
 </html>
