@@ -1,0 +1,8 @@
+/style.css
+  Content-Type: text/css; charset=utf-8
+
+/learn/*.css
+  Content-Type: text/css; charset=utf-8
+
+/learn/*.js
+  Content-Type: text/javascript; charset=utf-8
