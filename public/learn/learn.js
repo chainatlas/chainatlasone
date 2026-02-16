@@ -1,6 +1,4 @@
 import { LESSONS } from "./learn-data.js";
-import { initThemeToggle } from "./theme.js";
-import { startIllustrationLoop } from "./illustrations.js";
 
 const LS_KEY = "cao_learn_progress_v1";
 
@@ -10,8 +8,11 @@ const completedCountEl = document.getElementById("completedCount");
 const totalCountEl = document.getElementById("totalCount");
 const learnStatus = document.getElementById("learnStatus");
 const resetBtn = document.getElementById("resetProgressBtn");
+const themeBtn = document.getElementById("themeBtn");
 
-initThemeToggle(document.getElementById("themeBtn"));
+function setStatus(text) {
+  if (learnStatus) learnStatus.textContent = text;
+}
 
 function loadProgress() {
   try {
@@ -25,19 +26,52 @@ function loadProgress() {
 }
 
 function saveProgress(state) {
-  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  } catch {
+    // ignore
+  }
 }
 
-function setStatus(text) {
-  if (learnStatus) learnStatus.textContent = text;
+/* ---------- Theme toggle (inline, no external dependency) ---------- */
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  try {
+    localStorage.setItem("theme", theme);
+  } catch {
+    // ignore
+  }
 }
 
+function initThemeToggleInline(btn) {
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme") || "dark";
+    applyTheme(cur === "dark" ? "light" : "dark");
+  });
+}
+
+/* ---------- Render ---------- */
 function render() {
+  if (!grid) {
+    setStatus("Error: #lessonGrid not found");
+    return;
+  }
+
+  if (!Array.isArray(LESSONS) || LESSONS.length === 0) {
+    grid.innerHTML = "";
+    if (totalCountEl) totalCountEl.textContent = "0";
+    if (completedCountEl) completedCountEl.textContent = "0";
+    if (progressPctEl) progressPctEl.textContent = "0";
+    setStatus("Error: LESSONS not loaded");
+    return;
+  }
+
   const state = loadProgress();
   const done = state.done || {};
 
   grid.innerHTML = "";
-  totalCountEl.textContent = String(LESSONS.length);
+  if (totalCountEl) totalCountEl.textContent = String(LESSONS.length);
 
   let completed = 0;
 
@@ -80,38 +114,83 @@ function render() {
     grid.appendChild(card);
   }
 
-  completedCountEl.textContent = String(completed);
+  if (completedCountEl) completedCountEl.textContent = String(completed);
+
   const pct = LESSONS.length ? Math.round((completed / LESSONS.length) * 100) : 0;
-  progressPctEl.textContent = String(pct);
+  if (progressPctEl) progressPctEl.textContent = String(pct);
 
   setStatus(`Progress: ${pct}%`);
 }
 
-grid.addEventListener("click", (e) => {
-  const btn = e.target.closest("button[data-toggle]");
-  if (!btn) return;
+/* ---------- Events ---------- */
+function bindEvents() {
+  if (grid) {
+    grid.addEventListener("click", (e) => {
+      const btn = e.target?.closest?.("button[data-toggle]");
+      if (!btn) return;
 
-  const id = btn.getAttribute("data-toggle");
-  const state = loadProgress();
-  state.done = state.done || {};
-  state.done[id] = !state.done[id];
-  saveProgress(state);
+      const id = btn.getAttribute("data-toggle");
+      if (!id) return;
 
-  render();
-});
+      const state = loadProgress();
+      state.done = state.done || {};
+      state.done[id] = !state.done[id];
+      saveProgress(state);
 
-resetBtn?.addEventListener("click", () => {
-  localStorage.removeItem(LS_KEY);
-  render();
-  setStatus("Progress reset");
-});
+      render();
+      // try restart illustrations after re-render
+      startIllustrationsBestEffort();
+    });
+  }
 
-render();
+  resetBtn?.addEventListener("click", () => {
+    try {
+      localStorage.removeItem(LS_KEY);
+    } catch {
+      // ignore
+    }
+    render();
+    startIllustrationsBestEffort();
+    setStatus("Progress reset");
+  });
+}
 
-// Start canvas mini-illustrations loop
-startIllustrationLoop(() => {
-  return Array.from(document.querySelectorAll("canvas[data-ill]")).map((c) => ({
-    canvas: c,
-    kind: c.getAttribute("data-ill") || "mempool",
-  }));
-});
+/* ---------- Mini illustrations (optional) ---------- */
+let illustrationsStarted = false;
+
+async function startIllustrationsBestEffort() {
+  if (illustrationsStarted) return;
+
+  // Only start if canvases exist
+  const canvases = Array.from(document.querySelectorAll("canvas[data-ill]"));
+  if (!canvases.length) return;
+
+  try {
+    const mod = await import("./illustrations.js");
+    if (typeof mod.startIllustrationLoop !== "function") return;
+
+    illustrationsStarted = true;
+
+    mod.startIllustrationLoop(() => {
+      return Array.from(document.querySelectorAll("canvas[data-ill]")).map((c) => ({
+        canvas: c,
+        kind: c.getAttribute("data-ill") || "mempool",
+      }));
+    });
+  } catch {
+    // If illustrations.js is missing or fails, do nothing (Lessons still work)
+  }
+}
+
+/* ---------- Boot ---------- */
+(function boot() {
+  try {
+    initThemeToggleInline(themeBtn);
+    bindEvents();
+    render();
+    startIllustrationsBestEffort();
+  } catch (err) {
+    console.error(err);
+    setStatus(`Error: ${err?.message || err}`);
+  }
+})();

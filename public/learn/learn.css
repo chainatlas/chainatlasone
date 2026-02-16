@@ -1,185 +1,402 @@
-/* Learn-only additions. Uses your existing .card/.btn/.topbar styles. */
+/* =========================
+   ChainAtlasOne Learn — standalone CSS
+   (does NOT depend on /style.css)
+   ========================= */
 
-/* Make anchor buttons look like buttons */
-a.btn{
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* ---------- Tokens ---------- */
+:root{
+  --max: 1080px;
+
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel2: #fbfbfd;
+  --text: #0b0e14;
+  --muted: rgba(15, 18, 28, .62);
+  --stroke: rgba(15, 18, 28, .10);
+  --stroke2: rgba(15, 18, 28, .14);
+
+  --shadow: 0 16px 50px rgba(0,0,0,.08);
+  --shadow2: 0 10px 30px rgba(0,0,0,.06);
+
+  --green: #19c37d;
+  --red: #ff5d5d;
+  --blue: #7aaaff;
+  --amber: #f2c14e;
+
+  --cardR: 18px;
+  --blur: blur(16px);
 }
 
-/* Layout */
+:root[data-theme="dark"]{
+  --bg: #070a12;
+  --panel: rgba(255,255,255,.04);
+  --panel2: rgba(255,255,255,.03);
+  --text: rgba(235,240,248,1);
+  --muted: rgba(235,240,248,.65);
+  --stroke: rgba(255,255,255,.10);
+  --stroke2: rgba(255,255,255,.14);
+  --shadow: 0 24px 70px rgba(0,0,0,.55);
+  --shadow2: 0 14px 40px rgba(0,0,0,.35);
+}
+
+/* ---------- Base ---------- */
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#app{
+  max-width: var(--max);
+  margin: 22px auto;
+  padding: 0 18px 24px;
+}
+
+.hidden{ display:none; }
+.muted{ color: var(--muted); }
+
+.card{
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1px solid var(--stroke);
+  border-radius: var(--cardR);
+  box-shadow: var(--shadow2);
+}
+
+/* ---------- Buttons / Pills ---------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration:none;
+  font-weight: 800;
+  font-size: 13px;
+}
+.btn:hover{ border-color: var(--stroke2); }
+.btnGhost{ background: transparent; }
+.btnIcon{
+  width: 42px;
+  height: 42px;
+  display:grid;
+  place-items:center;
+}
+.iconMoon{ font-size: 16px; opacity:.9; }
+
+.statusPill{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.02);
+  font-size: 12px;
+  color: var(--muted);
+  white-space:nowrap;
+}
+
+.pill{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.02);
+  font-weight: 950;
+  font-size: 12px;
+}
+.pill.pos{ color: var(--green); border-color: rgba(25,195,125,.35); }
+.pill.neg{ color: var(--red); border-color: rgba(255,93,93,.35); }
+
+/* ---------- Topbar ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-width:0;
+}
+.logo{
+  height: 52px;
+  width: auto;
+  display:block;
+}
+
+.logo-dark{ display:block; }
+.logo-light{ display:none; }
+
+html[data-theme="dark"] .logo-dark{ display:block; }
+html[data-theme="dark"] .logo-light{ display:none; }
+html[data-theme="light"] .logo-dark{ display:none; }
+html[data-theme="light"] .logo-light{ display:block; }
+
+.topActions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* ---------- Learn Layout ---------- */
 .learnContent{
-  display: grid;
-  gap: 14px;
+  margin-top: 14px;
 }
 
-/* Hero */
 .learnHero{
-  padding: 14px;
-  display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  gap: 12px;
-  align-items: start;
+  padding: 18px;
+  display:grid;
+  grid-template-columns: 1.2fr .9fr;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .learnTitle{
-  margin: 0 0 6px;
-  font-size: 26px;
+  margin:0;
+  font-size: 32px;
   font-weight: 950;
   letter-spacing: .2px;
 }
-
 .learnSubtitle{
-  margin: 0 0 12px;
+  margin: 8px 0 0;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.45;
+  font-size: 14px;
 }
 
 .learnMetaRow{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display:flex;
   gap: 10px;
+  margin-top: 14px;
+  flex-wrap:wrap;
+}
+
+.kpiInline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding: 10px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  background: rgba(255,255,255,.02);
+  min-width: 220px;
+}
+.kpiInlineLabel{
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing:.08em;
+}
+.kpiInlineValue{
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
 }
 
 .learnHeroPanel{
-  border-radius: var(--cardR);
-  padding: 14px;
+  padding: 14px 14px 12px;
   border: 1px solid var(--stroke);
+  border-radius: 16px;
   background: rgba(255,255,255,.02);
 }
-
 .learnPanelTitle{
   font-size: 12px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
+  letter-spacing:.12em;
   font-weight: 950;
-  margin-bottom: 10px;
+  color: var(--muted);
+  margin-bottom: 8px;
 }
-
 .learnPanelList{
   margin: 0;
   padding-left: 18px;
-  line-height: 1.55;
   color: var(--muted);
+  line-height: 1.5;
+  font-size: 13px;
 }
+.learnPanelList li{ margin: 6px 0; }
 
-/* Grid of lessons */
+/* ---------- Lessons Grid ---------- */
 .learnGrid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display:grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
+  margin-bottom: 14px;
 }
 
 .lessonCard{
   padding: 14px;
-  display: grid;
-  gap: 10px;
 }
 
 .lessonTop{
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
   gap: 12px;
 }
 
+.lessonTopLeft{
+  min-width:0;
+}
+
 .lessonTag{
+  display:inline-flex;
+  align-items:center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.02);
   font-size: 12px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
   font-weight: 950;
-  margin-bottom: 6px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  margin-bottom: 8px;
 }
 
 .lessonTitleSmall{
-  margin: 0;
+  margin:0;
   font-size: 16px;
   font-weight: 950;
 }
 
 .lessonDesc{
-  margin: 0;
+  margin: 10px 0 12px;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.45;
+  font-size: 13px;
 }
 
 .lessonActions{
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex-wrap:wrap;
 }
 
 .pillSmall{
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   gap: 8px;
-  padding: 6px 10px;
+  padding: 7px 10px;
   border-radius: 999px;
   border: 1px solid var(--stroke);
   background: rgba(255,255,255,.02);
-  color: var(--muted);
   font-weight: 900;
   font-size: 12px;
+  color: var(--muted);
 }
-
-.check{
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
-  border: 1px solid var(--stroke2);
-  display: grid;
-  place-items: center;
+.pillSmall .check{
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  border: 1px solid var(--stroke);
   color: var(--green);
+  font-weight: 950;
 }
 
-/* Lesson page */
+/* Mini illustration canvas */
+.lessonMiniCanvas{
+  width: 120px;
+  height: 54px;
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  background: rgba(0,0,0,.04);
+  display:block;
+}
+
+/* ---------- Lesson page (wide card) ---------- */
 .lessonCardWide{
-  padding: 14px;
+  padding: 16px;
 }
 
 .lessonTopRow{
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.lessonProgressPill{
-  white-space: nowrap;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 14px;
+  flex-wrap:wrap;
+  margin-bottom: 12px;
 }
 
 .lessonInner{
+  padding: 14px;
   margin-top: 12px;
-  padding: 14px;
-  background: rgba(255,255,255,.02);
-}
-
-.learnFooterCard{
-  padding: 14px;
 }
 
 .learnFooterTitle{
-  font-size: 12px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
   font-weight: 950;
+  letter-spacing:.02em;
   margin-bottom: 8px;
 }
 
 .learnFooterText{
-  margin: 0;
+  margin:0;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.55;
+  font-size: 13px;
 }
 
-/* Mobile */
-@media (max-width: 860px){
+/* Lesson hero canvas */
+.lessonHeroCanvas{
+  width: 100%;
+  height: 140px;
+  margin-top: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--stroke);
+  background: rgba(0,0,0,.04);
+  display:block;
+}
+
+/* ---------- Footer card ---------- */
+.learnFooterCard{
+  padding: 14px;
+}
+
+/* ---------- Tooltip ---------- */
+.tooltip{
+  position:fixed;
+  z-index:9999;
+  max-width: 340px;
+  padding: 10px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  background: rgba(0,0,0,.35);
+  color: var(--text);
+  backdrop-filter: var(--blur);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  pointer-events:none;
+}
+:root[data-theme="light"] .tooltip{ background: rgba(255,255,255,.85); color:#111; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px){
   .learnHero{ grid-template-columns: 1fr; }
   .learnGrid{ grid-template-columns: 1fr; }
-  .lessonTopRow{ flex-direction: column; }
+}
+
+@media (max-width: 640px){
+  #app{
+    margin: 14px auto;
+    padding: 0 12px 18px;
+  }
+  .topbar{
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .brand{ flex: 1 1 100%; }
+  .logo{ height: 46px; }
+  .topActions{ flex: 1 1 100%; justify-content:flex-start; }
+  .statusPill{ flex: 0 0 auto; }
+  .lessonMiniCanvas{ width: 110px; height: 52px; }
+  .lessonHeroCanvas{ height: 120px; }
 }

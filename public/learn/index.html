@@ -20,7 +20,6 @@
     />
     <meta name="robots" content="index,follow" />
 
-    <!-- Canonical / Open Graph -->
     <link rel="canonical" href="https://www.chainatlasone.com/learn/" />
     <meta property="og:title" content="ChainAtlasOne — Bitcoin Learning Path" />
     <meta
@@ -31,14 +30,55 @@
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
 
-    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/style.css" />
-    <link rel="stylesheet" href="/learn/learn.css" />
+    <link rel="stylesheet" href="./learn.css" />
+<script type="module" src="./learn.js"></script>
+
+    <!-- ✅ CSS fallback injector (fixes “CSS delivered but not applied” edge cases) -->
+    <script>
+      (function () {
+        function looksUnstyled() {
+          try {
+            const theme = document.documentElement.getAttribute("data-theme") || "dark";
+            const bg = getComputedStyle(document.body).backgroundColor;
+            // If dark theme but body is still white/transparent, CSS likely not applied.
+            return theme === "dark" && (bg === "rgb(255, 255, 255)" || bg === "rgba(0, 0, 0, 0)");
+          } catch {
+            return false;
+          }
+        }
+
+        function injectCss(cssText) {
+          if (!cssText || !cssText.trim()) return;
+          const st = document.createElement("style");
+          st.setAttribute("data-inline-css", "1");
+          st.textContent = cssText;
+          document.head.appendChild(st);
+        }
+
+        window.addEventListener("DOMContentLoaded", async () => {
+          // Give normal <link> styles a moment
+          setTimeout(async () => {
+            if (!looksUnstyled()) return;
+            try {
+              const urls = ["/style.css", "/learn/learn.css"];
+              const texts = await Promise.all(
+                urls.map((u) =>
+                  fetch(u, { cache: "no-store" })
+                    .then((r) => (r.ok ? r.text() : ""))
+                    .catch(() => "")
+                )
+              );
+              texts.forEach(injectCss);
+            } catch {}
+          }, 60);
+        });
+      })();
+    </script>
   </head>
 
   <body>
@@ -50,20 +90,11 @@
         </div>
 
         <div class="topActions">
-          <!-- use explicit file to avoid any rewrite/index ambiguity -->
           <a class="btn btnGhost" href="/index.html" aria-label="Back to dashboard">Dashboard</a>
           <button id="resetProgressBtn" class="btn btnGhost" type="button">Reset progress</button>
-
-          <button
-            id="themeBtn"
-            class="btn btnIcon"
-            type="button"
-            title="Toggle theme"
-            aria-label="Toggle theme"
-          >
+          <button id="themeBtn" class="btn btnIcon" type="button" title="Toggle theme" aria-label="Toggle theme">
             <span class="iconMoon" aria-hidden="true">☾</span>
           </button>
-
           <span id="learnStatus" class="statusPill">Ready</span>
         </div>
       </header>
@@ -114,24 +145,3 @@
       </main>
 
       <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
-    </div>
-
-    <!-- Learn app -->
-    <script type="module" src="/learn/learn.js"></script>
-
-    <!-- Structured data -->
-    <script type="application/ld+json">
-    {
-      "@context":"https://schema.org",
-      "@type":"Course",
-      "name":"ChainAtlasOne Bitcoin Learning Path",
-      "description":"Beginner-friendly Bitcoin lessons connected to real-world context. No hype. Just fundamentals.",
-      "provider":{
-        "@type":"Organization",
-        "name":"ChainAtlasOne",
-        "url":"https://www.chainatlasone.com"
-      }
-    }
-    </script>
-  </body>
-</html>
