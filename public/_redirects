@@ -1,2 +1,7 @@
-/learn/*  /learn/:splat  200
-/*        /index.html    200
+/learn/lesson.html  /learn/lesson.html  200
+/learn/             /learn/index.html   200
+/learn              /learn/             301
+
+# OPTIONAL: nur falls du unbedingt einen SPA-Fallback brauchst.
+# Für dein Projekt (statische Seiten) empfehle ich: weglassen!
+# /*               /index.html          200
