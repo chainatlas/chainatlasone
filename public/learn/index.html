@@ -1,114 +1,42 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-   <style>
-  /* Prevent flash of unstyled content (FOUC) */
-  html { background: #070a12; }
-  html[data-theme="light"] { background: #ffffff; }
-  body { margin: 0; }
-  
-</style>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>ChainAtlasOne — Learn</title>
 
+  <!-- Dark mode default (before render) -->
+  <script>
+    (function () {
+      const saved = localStorage.getItem("theme");
+      document.documentElement.setAttribute("data-theme", saved || "dark");
+    })();
+  </script>
 
- <title>ChainAtlasOne — Learn</title>
+  <meta
+    name="description"
+    content="ChainAtlasOne Learn: beginner-friendly Bitcoin lessons connected to real-world context."
+  />
+  <meta name="robots" content="index,follow" />
 
-    <!-- Theme (early, dark default) -->
-    <script>
-      (function () {
-        const saved = localStorage.getItem("theme");
-        const theme = saved || "dark";
-        document.documentElement.setAttribute("data-theme", theme);
-      })();
-    </script>
+  <link rel="canonical" href="https://www.chainatlasone.com/learn/" />
+  <meta property="og:title" content="ChainAtlasOne — Bitcoin Learning Path" />
+  <meta property="og:description" content="Beginner-friendly Bitcoin lessons. No hype. Just fundamentals." />
+  <meta property="og:url" content="https://www.chainatlasone.com/learn/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
 
-    <meta
-      name="description"
-      content="ChainAtlasOne Learn: beginner-friendly Bitcoin lessons connected to real-world context."
-    />
-    <meta name="robots" content="index,follow" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
 
-    <link rel="canonical" href="https://www.chainatlasone.com/learn/" />
-    <meta property="og:title" content="ChainAtlasOne — Bitcoin Learning Path" />
-    <meta
-      property="og:description"
-      content="Beginner-friendly Bitcoin lessons. No hype. Just fundamentals."
-    />
-    <meta property="og:url" content="https://www.chainatlasone.com/learn/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://www.chainatlasone.com/preview.png" />
+  <!-- ONLY Learn CSS -->
+  <link rel="stylesheet" href="./learn.css" />
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-<style>
-  /* Hide only Learn page until learn.css is loaded */
-  html:not(.learn-css) body { visibility: hidden; }
-  html:not(.learn-css) body::before{
-    content:"";
-    position: fixed;
-    inset: 0;
-    background: #070a12;
-    visibility: visible;
-  }
-  html[data-theme="light"]:not(.learn-css) body::before{
-    background: #ffffff;
-  }
-</style>
+  <!-- Learn JS -->
+  <script type="module" src="./learn.js"></script>
+</head>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="./learn.css" onload="document.documentElement.classList.add('learn-css')">
-
-<script type="module" src="./learn.js"></script>
-
-    <!-- ✅ CSS fallback injector (fixes “CSS delivered but not applied” edge cases) -->
-    <script>
-      (function () {
-        function looksUnstyled() {
-          try {
-            const theme = document.documentElement.getAttribute("data-theme") || "dark";
-            const bg = getComputedStyle(document.body).backgroundColor;
-            // If dark theme but body is still white/transparent, CSS likely not applied.
-            return theme === "dark" && (bg === "rgb(255, 255, 255)" || bg === "rgba(0, 0, 0, 0)");
-          } catch {
-            return false;
-          }
-        }
-
-        function injectCss(cssText) {
-          if (!cssText || !cssText.trim()) return;
-          const st = document.createElement("style");
-          st.setAttribute("data-inline-css", "1");
-          st.textContent = cssText;
-          document.head.appendChild(st);
-        }
-
-        window.addEventListener("DOMContentLoaded", async () => {
-          // Give normal <link> styles a moment
-          setTimeout(async () => {
-            if (!looksUnstyled()) return;
-            try {
-              const urls = ["/style.css", "/learn/learn.css"];
-              const texts = await Promise.all(
-                urls.map((u) =>
-                  fetch(u, { cache: "no-store" })
-                    .then((r) => (r.ok ? r.text() : ""))
-                    .catch(() => "")
-                )
-              );
-              texts.forEach(injectCss);
-            } catch {}
-          }, 60);
-        });
-      })();
-    </script>
-<style>
-  /* Show UI once CSS is ready */
-  
-</style>
-
-  </head>
 
   <body>
     <div id="app">
