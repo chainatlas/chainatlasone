@@ -970,3 +970,25 @@ html[data-theme="light"] .logo-light{ display:block; }
   position: relative;
   z-index: 1;
 }
+/* Topbar nav */
+.topNav{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* Mobile: Nav darf umbrechen */
+@media (max-width: 640px){
+  .topNav{
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+/* Remove underline from navigation buttons */
+.topNav a{
+  text-decoration: none;
+}
+
+.topNav a:hover{
+  text-decoration: none;
+}
