@@ -884,6 +884,89 @@ html[data-theme="light"] .logo-light{ display:block; }
   max-width: 640px;
   line-height: 1.5;
 }
-.heroAccent{
+/* ===========================
+   Topbar Insights Button
+   =========================== */
+
+.btnInsights{
   font-weight: 900;
+  letter-spacing: .02em;
+  border-radius: 999px;
+  padding: 10px 16px;
+
+  background:
+    linear-gradient(90deg,
+      rgba(122,170,255,.15),
+      rgba(25,195,125,.15)
+    );
+
+  border: 1px solid rgba(122,170,255,.35);
+}
+
+.btnInsights:hover{
+  border-color: rgba(25,195,125,.55);
+  box-shadow: 0 0 0 2px rgba(25,195,125,.12) inset;
+}
+/* ===========================
+   Hero Row Layout
+   =========================== */
+
+.heroRow{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.heroText{
+  max-width:720px;
+}
+
+.btnInsightsHero{
+  align-self:flex-start;
+  margin-top:4px;
+
+  font-weight:900;
+  letter-spacing:.02em;
+  border-radius:999px;
+  padding:12px 18px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(122,170,255,.9),
+    rgba(25,195,125,.9)
+  );
+
+  border:1px solid rgba(122,170,255,.35);
+  color:#000;
+
+  box-shadow:0 12px 30px rgba(25,195,125,.25);
+  transition:all .2s ease;
+}
+
+.btnInsightsHero:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 40px rgba(25,195,125,.35);
+}
+
+/* Mobile */
+@media (max-width: 640px){
+  .heroRow{
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .btnInsightsHero{
+    width:100%;
+    text-align:center;
+  }
+}
+.btnInsightsHero{
+  position: relative;
+  z-index: 50;
+  pointer-events: auto;
+}
+.heroLine, .heroRow{
+  position: relative;
+  z-index: 1;
 }

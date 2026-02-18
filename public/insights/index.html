@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+   <script>
+  (function () {
+    const key = "theme"; // muss zum Dashboard passen
+    const saved = localStorage.getItem(key);
+    document.documentElement.setAttribute("data-theme", saved || "dark");
+  })();
+</script>
+
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <title>Insights – ChainAtlasOne</title>
+    <meta name="description" content="Advanced Bitcoin insights: fees, blockspace, network security and monetary policy — visual, real-time, neutral." />
+    <link rel="canonical" href="https://www.chainatlasone.com/insights/" />
+
+    <meta property="og:title" content="ChainAtlasOne Insights" />
+    <meta property="og:description" content="Advanced Bitcoin insights: fees, blockspace, network security and monetary policy — visual, real-time, neutral." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.chainatlasone.com/insights/" />
+
+    <link rel="stylesheet" href="./base.css" />
+    <link rel="stylesheet" href="./insights.css" />
+
+    <!-- Reuse your existing theme logic so dark/light matches the rest of the site -->
+      </head>
+
+  <body>
+    <header class="topbar">
+     <div class="brand" aria-label="ChainAtlasOne">
+  <img
+    id="siteLogo"
+    src="https://www.chainatlasone.com/logo-dark.png"
+    alt="ChainAtlasOne"
+    class="logo"
+    style="height:52px;width:auto;display:block"
+  />
+</div>
+
+
+      <div class="topbarActions">
+        <a class="btn btnGhost" href="/">Dashboard</a>
+        <a class="btn btnGhost" href="/learn/">Learn</a>
+        <button class="btn btnIcon" id="themeBtn" type="button" title="Toggle theme" aria-label="Toggle theme">
+          <span class="iconMoon" aria-hidden="true">☾</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card hero" aria-label="Insights hero">
+        <div class="heroTop">
+          <div>
+            <h1 class="heroTitle">Insights</h1>
+            <p class="heroSub">A visual Bitcoin transparency lab. Deeper metrics, zero hype.</p>
+          </div>
+          <div class="heroPills" aria-label="Scope pills">
+            <span class="pill">Fees</span>
+            <span class="pill">Blockspace</span>
+            <span class="pill">Security</span>
+            <span class="pill">Monetary Policy</span>
+          </div>
+        </div>
+
+        <div class="heroMini">
+          <div class="miniStat">
+            <div class="k">Live status</div>
+            <div class="v"><span class="dotLive"></span>connected</div>
+          </div>
+          <div class="miniStat">
+            <div class="k">Mode</div>
+            <div class="v">Advanced</div>
+          </div>
+          <div class="miniStat">
+            <div class="k">Crypto Asset</div>
+            <div class="v">BITCOIN</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sectionHead">
+        <h2>Fee & Blockspace</h2>
+        <p class="muted">Understand demand for blockspace in real time.</p>
+      </section>
+      <section class="grid" id="gridFees" aria-label="Fee & blockspace cards"></section>
+
+      <section class="sectionHead">
+        <h2>Mining & Security</h2>
+        <p class="muted">Network security and retarget cadence.</p>
+      </section>
+      <section class="grid" id="gridSecurity" aria-label="Mining & security cards"></section>
+
+      <section class="sectionHead">
+        <h2>Supply & Monetary Policy</h2>
+        <p class="muted">Issuance, inflation rate and long-term supply curve.</p>
+      </section>
+      <section class="grid" id="gridSupply" aria-label="Supply & monetary policy cards"></section>
+    </main>
+
+    <footer class="footer">
+      <span class="muted">© <span id="year"></span> ChainAtlasOne</span>
+      <span class="muted">•</span>
+      <a class="muted" href="/learn/">Learn</a>
+      <span class="muted">•</span>
+      <a class="muted" href="/">Dashboard</a>
+    </footer>
+
+    <script defer src="./insights-data.js"></script>
+    <script defer src="./visuals.js"></script>
+    <script defer src="./insights.js"></script>
+    <script>
+      document.getElementById("year").textContent = String(new Date().getFullYear());
+    </script>
+<script>
+  (function () {
+    const key = "theme";
+    const root = document.documentElement;
+
+    const DARK = "https://www.chainatlasone.com/logo-dark.png";
+    const LIGHT = "https://www.chainatlasone.com/logo-light.png";
+
+    function applyLogo(){
+      const t = root.getAttribute("data-theme") || "dark";
+      const logo = document.getElementById("siteLogo");
+      if (!logo) return;
+      logo.src = (t === "light") ? LIGHT : DARK;
+    }
+
+    // initial theme
+    const saved = localStorage.getItem(key);
+    root.setAttribute("data-theme", saved || "dark");
+    applyLogo();
+
+    // toggle
+    const btn = document.getElementById("themeBtn");
+    if (btn){
+      btn.addEventListener("click", () => {
+        const cur = root.getAttribute("data-theme") || "dark";
+        const next = (cur === "dark") ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+        applyLogo();
+      });
+    }
+  })();
+</script>
+
+  
+</body>
+</html>
